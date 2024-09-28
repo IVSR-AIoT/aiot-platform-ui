@@ -1,6 +1,7 @@
-import { publicRoutes, privateRoutes } from './routes/routes';
+import { publicRoutes, adminRoutes, userRoutes } from './routes/routes';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdminRoutes from './adminRoutes';
+import AdminRoutes from './auth/adminRoutes';
+import UserRoutes from './auth/userRoutes';
 
 function App() {
     return (
@@ -12,7 +13,22 @@ function App() {
                     return <Route key={index} path={route.path} element={<Page />} />;
                 })}
 
-                {privateRoutes.map((route, index) => {
+                {userRoutes.map((route, index) => {
+                    const Page = route.component;
+                    return (
+                        <Route
+                            key={index}
+                            path={route.path}
+                            element={
+                                <UserRoutes>
+                                    <Page />
+                                </UserRoutes>
+                            }
+                        />
+                    );
+                })}
+
+                {adminRoutes.map((route, index) => {
                     const Page = route.component;
                     return (
                         <Route

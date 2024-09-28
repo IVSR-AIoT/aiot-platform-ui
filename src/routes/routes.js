@@ -9,9 +9,7 @@ const publicRoutes = [
     { path: RoutesConfig.register, component: Register },
 ];
 
-const privateRoutes = [
-    { path: RoutesConfig.home, component: Home },
-    { path: RoutesConfig.dashboard, component: Dashboard },
-];
+const userRoutes = [{ path: RoutesConfig.home, component: Home }];
+const adminRoutes = [{ path: RoutesConfig.dashboard, component: Dashboard }];
 
-export { publicRoutes, privateRoutes };
+export { publicRoutes,userRoutes, adminRoutes };
