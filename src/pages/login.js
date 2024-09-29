@@ -13,19 +13,18 @@ function Login() {
     const [isEmptyPass, setIsEmptyPass] = useState(false);
     const navigate = useNavigate();
 
-    const show = useRef()
+    const show = useRef();
 
     const showAlert = () => {
         setIsVisible(true);
 
-        if(show.current){
-            clearTimeout(show.current)
+        if (show.current) {
+            clearTimeout(show.current);
         }
 
         show.current = setTimeout(() => {
-            setIsVisible(false); 
+            setIsVisible(false);
         }, 2000);
-        
     };
 
     const handleLogin = async (e) => {
@@ -44,12 +43,11 @@ function Login() {
                 navigate(isAdmin() ? '/dashboard' : '/');
             }
         } catch (err) {
-           showAlert()
+            showAlert();
         }
     };
 
     return (
-
         <div className="w-[100%] h-[screen]">
             {isVisible && (
                 <div
@@ -67,7 +65,9 @@ function Login() {
                     </svg>
                     <span className="sr-only">Info</span>
                     <div>
-                        <span className="font-medium">Danger alert!</span> Change a few things up and try submitting again.
+                        <span className="font-medium">
+                            Incorrect username or password. Type the correct username and password, and try again.
+                        </span>
                     </div>
                 </div>
             )}
