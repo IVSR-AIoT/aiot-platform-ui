@@ -1,37 +1,76 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAdmin } from '~/hook/useAuth';
 import { checkLogin } from '~/services/userService';
 
 function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [form, setForm] = useState({
+        username: '',
+        password: '',
+    });
+    const [isVisible, setIsVisible] = useState(false);
     const [isEmpty, setIsEmpty] = useState(false);
     const [isEmptyPass, setIsEmptyPass] = useState(false);
     const navigate = useNavigate();
 
+    const show = useRef()
+
+    const showAlert = () => {
+        setIsVisible(true);
+
+        if(show.current){
+            clearTimeout(show.current)
+        }
+
+        show.current = setTimeout(() => {
+            setIsVisible(false); 
+        }, 2000);
+        
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (username.trim() === '' || password.trim() === '') {
-            if (username.trim() === '') setIsEmpty(true);
-            if (password.trim() === '') setIsEmptyPass(true);
+        if (form.username.trim() === '' || form.password.trim() === '') {
+            if (form.username.trim() === '') setIsEmpty(true);
+            if (form.password.trim() === '') setIsEmptyPass(true);
             return;
         }
-        const User = { username, password };
+        console.log(form);
 
         try {
-            const res = await checkLogin(User);
+            const res = await checkLogin(form);
             localStorage.setItem('token', res.data.accessToken);
             if (res.status === 201) {
                 navigate(isAdmin() ? '/dashboard' : '/');
             }
         } catch (err) {
-            alert('Incorrect username or password. Type the correct username and password, and try again.');
+           showAlert()
         }
     };
 
     return (
+
         <div className="w-[100%] h-[screen]">
+            {isVisible && (
+                <div
+                    className={`flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 absolute top-0 right-0 transition-opacity duration-300`}
+                    role="alert"
+                >
+                    <svg
+                        className="flex-shrink-0 inline w-4 h-4 me-3"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                    >
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                    </svg>
+                    <span className="sr-only">Info</span>
+                    <div>
+                        <span className="font-medium">Danger alert!</span> Change a few things up and try submitting again.
+                    </div>
+                </div>
+            )}
             <h1 className="text-[60px] text-center mt-20 text-[#8f8e8e]">Login</h1>
             <p className="text-[14px] text-center text-[#8f8e8e] my-[20px]">Sign in to continue</p>
 
@@ -40,13 +79,16 @@ function Login() {
                     <h2 className="text-[#8f8e8e] my-1">EMAIL:</h2>
                     <input
                         onChange={(e) => {
-                            setUsername(e.target.value);
+                            setForm({
+                                ...form,
+                                username: e.target.value,
+                            });
                             setIsEmpty(false);
                         }}
                         required
                         className="py-2 px-5 bg-[#ececec] text-[14px] rounded-md w-[100%] focus:outline-none placeholder:text-[#4d4c4c] placeholder:text-[14px]"
                         type="text"
-                        value={username}
+                        value={form.username}
                         placeholder="Type your email"
                     />
                     {isEmpty && <p className="text-red-500 text-[14px]">Username is empty</p>}
@@ -54,13 +96,16 @@ function Login() {
                     <h2 className="text-[#8f8e8e] mt-6 mb-1">PASSWORD:</h2>
                     <input
                         onChange={(e) => {
-                            setPassword(e.target.value);
+                            setForm({
+                                ...form,
+                                password: e.target.value,
+                            });
                             setIsEmptyPass(false);
                         }}
                         required
                         className="px-5 py-2 bg-[#ececec] rounded-md w-[100%] focus:outline-none placeholder:text-[#4d4c4c] placeholder:text-[14px]"
                         type="password"
-                        value={password}
+                        value={form.password}
                         placeholder="Type your password"
                     />
                     {isEmptyPass && <p className="text-red-500 text-[14px]">Password is empty</p>}

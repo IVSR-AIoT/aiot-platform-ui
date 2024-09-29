@@ -8,7 +8,6 @@ export const getUser = () => {
     if (!token) {
         return null;
     }
-
     const payload = JSON.parse(atob(token.split('.')[1]));
     
     return payload;
@@ -16,6 +15,5 @@ export const getUser = () => {
 
 export const isAdmin = () => {
     const user = getUser();
-    console.log(user)
     return user && user.roleId === 1;
 };
