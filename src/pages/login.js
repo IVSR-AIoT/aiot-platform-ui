@@ -34,7 +34,6 @@ function Login() {
             if (form.password.trim() === '') setIsEmptyPass(true);
             return;
         }
-        console.log(form);
 
         try {
             const res = await checkLogin(form);
