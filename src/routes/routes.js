@@ -1,5 +1,6 @@
 import { RoutesConfig } from '~/configs/routesConfig';
 import Dashboard from '~/pages/dashboard';
+import Device from '~/pages/device';
 import Home from '~/pages/home';
 import Login from '~/pages/login';
 import Project from '~/pages/project';
@@ -13,7 +14,9 @@ const publicRoutes = [
 const userRoutes = [
     { path: RoutesConfig.home, component: Home },
     { path: RoutesConfig.project, component: Project },
+    { path: RoutesConfig.device, component: Device },
 ];
+
 const adminRoutes = [{ path: RoutesConfig.dashboard, component: Dashboard }];
 
 export { publicRoutes, userRoutes, adminRoutes };

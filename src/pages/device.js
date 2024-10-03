@@ -1,9 +1,7 @@
-function Home() {
+export default function Device() {
     return (
         <div className="h-screen mt-[60px]">
-            <h1> Home page</h1>
+            <h1> this is device</h1>
         </div>
     );
 }
-
-export default Home;

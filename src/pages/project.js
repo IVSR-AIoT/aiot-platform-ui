@@ -36,7 +36,7 @@ export default function Project() {
     }, []);
 
     return (
-        <div className="w-[100%]">
+        <div className="w-[100%] h-screen mt-[60px]">
             {openDialog && <div className="w-[100%] h-[100%] fixed  inset-0 bg-black opacity-50 z-40"></div>}
 
             <div>

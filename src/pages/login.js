@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isAdmin } from '~/hook/useAuth';
 import { checkLogin } from '~/services/userService';
 
 function Login() {
@@ -39,7 +38,7 @@ function Login() {
             const res = await checkLogin(form);
             localStorage.setItem('token', res.data.accessToken);
             if (res.status === 201) {
-                navigate(isAdmin() ? '/dashboard' : '/');
+                navigate('/');
             }
         } catch (err) {
             showAlert();

@@ -4,4 +4,5 @@ export const RoutesConfig = {
     home: '/',
     dashboard: '/dashboard',
     project: '/project',
+    device:'/device'
 };

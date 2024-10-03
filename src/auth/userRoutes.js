@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAuthentication } from '~/hook/useAuth';
-import Header from '~/components/header';
-import Footer from '~/components/footer';
-import Sidebar from '~/components/sidebar';
+import Header from '~/layout/header';
+import Footer from '~/layout/footer';
+import Sidebar from '~/layout/sidebar';
 
 export default function UserRoutes({ children }) {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function UserRoutes({ children }) {
     return (
         <div>
             <Header />
-            <Sidebar/>
+            <Sidebar />
             {children}
             <Footer />
         </div>

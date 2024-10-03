@@ -6,7 +6,7 @@ function SidebarProvider({ children }) {
     const [openSidebar, setOpenSidebar] = useState(false);
 
     const handleToggle = () => {
-        setOpenSidebar(!openSidebar);
+        setOpenSidebar((prev) => (!prev));
     };
 
     const value = { openSidebar, handleToggle };

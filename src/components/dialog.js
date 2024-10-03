@@ -128,7 +128,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
     if (error) return <p>Failed to load users.</p>;
 
     return (
-        <div className="w-[300px] h-auto bg-slate-300 p-2 relative rounded-lg">
+        <div className="w-[300px] h-auto bg-slate-300 p-4 relative rounded-lg">
             {alert.success && (
                 <div class="p-4 my-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 ">
                     <span class="font-medium">Success alert!</span> Change a few things up and try submitting again.
@@ -145,7 +145,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                class="size-4 absolute top-0 right-0 mt-1 mr-1 cursor-pointer"
+                class="size-5 absolute top-0 right-0 mt-2 mr-2 cursor-pointer"
             >
                 <path
                     fill-rule="evenodd"
@@ -170,7 +170,9 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     type="text"
                     disabled={!isAdmin()}
                     placeholder="Name"
-                    className={`cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5`}
+                    className={`cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
+                        !isAdmin() ? `cursor-not-allowed` : ''
+                    }`}
                 />
                 {!isEmpty.name && <p className="text-red-500 text-[14px]">Name is empty</p>}
 
@@ -201,13 +203,14 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     type="text"
                     disabled={!isAdmin()}
                     placeholder="Description"
-                    className="cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5 "
+                    className={`cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
+                        !isAdmin() ? `cursor-not-allowed` : ''
+                    }`}
                 />
                 {!isEmpty.description && <p className="text-red-500 text-[14px]">Description is empty</p>}
             </form>
             <div className="flex justify-center">
                 <button
-                    disabled={!isAdmin()}
                     onClick={closeDialog}
                     type="button"
                     class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 w-[100px]"
@@ -215,9 +218,12 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     Cancel
                 </button>
                 <button
+                    disabled={!isAdmin()}
                     onClick={handleSubmit}
                     type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 w-[100px]"
+                    className={`text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 w-[100px] ${
+                        !isAdmin() ? `cursor-not-allowed` : ''
+                    }`}
                 >
                     Submit
                 </button>
