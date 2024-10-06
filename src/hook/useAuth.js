@@ -1,10 +1,10 @@
 
 export const isAuthentication = () => {
-    return localStorage.getItem('token') !== null;
+    return localStorage.getItem('accessToken') !== null;
 };
 
 export const getUser = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
         return null;
     }
@@ -15,5 +15,6 @@ export const getUser = () => {
 
 export const isAdmin = () => {
     const user = getUser();
-    return user && user.roleId === 1;
+    return user && user.roleId !== 2;
 };
+

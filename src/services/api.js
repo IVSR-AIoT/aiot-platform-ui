@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const apiInstances = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     timeout: 1000,
@@ -8,14 +7,15 @@ const apiInstances = axios.create({
 });
 
 apiInstances.interceptors.request.use(
-    function (config) {
-        const accessToken = localStorage.getItem('token');
-        if (accessToken) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`;
+    (config) => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
-    function (error) {
+    (error) => {
+        console.log(error)
         return Promise.reject(error);
     },
 );

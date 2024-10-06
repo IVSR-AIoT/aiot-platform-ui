@@ -1,4 +1,4 @@
-import {
+ import {
     faBuilding,
     faChartBar,
     faCircleInfo,
@@ -29,6 +29,9 @@ export const menuItems = [
             { label: 'Option 1', route: '', icon: faUser },
             { label: 'Option 2', route: '', icon: faUser },
             { label: 'Option 3', route: '', icon: faUser },
+            { label: 'Option 4', route: '', icon: faUser },
+            { label: 'Option 5', route: '', icon: faUser },
+            { label: 'Option 6', route: '', icon: faUser },
         ],
     },
     {
@@ -51,3 +54,5 @@ export const menuItems = [
         ],
     },
 ];
+ 
+

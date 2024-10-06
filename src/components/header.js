@@ -1,32 +1,35 @@
-import { useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '~/hook/useAuth';
-import { sidebarContext } from '~/hook/useContext';
+import { getUser, isAuthentication } from '~/hook/useAuth';
 
 function Header() {
     const [toggle, setToggle] = useState(false);
-    const context = useContext(sidebarContext);
+
     const navigate = useNavigate();
 
     const toggleMenu = () => {
         setToggle(!toggle);
     };
 
-    const user = getUser();
+    useEffect(() => {
+        if (!isAuthentication()) {
+            navigate('/login');
+        }
+    }, [navigate]);
+
+    const userName = isAuthentication() ? getUser().name : '';
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
     };
 
-    const openSidebar = context.handleToggle;
+   
 
     return (
-        <div className="h-[60px] w-[100%] bg-slate-300 flex justify-between items-center px-[30px] fixed top-0">
+        <div className="h-[60px] w-[100%] bg-slate-300 flex justify-between items-center px-[30px] fixed top-0 z-50">
             <svg
-                onClick={() => {
-                    openSidebar();
-                }}
+               
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -38,7 +41,7 @@ function Header() {
             </svg>
 
             <div className="flex cursor-pointer" onClick={toggleMenu}>
-                <p className="mr-2">{user.name}</p>
+                <p className="mr-2">{userName}</p>
                 {toggle && (
                     <ul className="absolute top-[60px] right-[20px] bg-slate-200 rounded-lg">
                         <li className="w-[120px] h-[40px] flex items-center justify-center p-5" onClick={handleLogout}>

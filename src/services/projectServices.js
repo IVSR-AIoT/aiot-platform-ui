@@ -14,5 +14,9 @@ export const getUserInProject = async (projectId) => {
 };
 export const updateProject = async (projectId, data) => {
     const response = await api.put(`/project/${projectId}`, data);
-    return response
+    return response;
+};
+export const deleteProject = async (projectId) => {
+    const response = await api.delete(`/project/${projectId}`);
+    return response;
 };

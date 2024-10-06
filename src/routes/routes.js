@@ -11,12 +11,13 @@ const publicRoutes = [
     { path: RoutesConfig.register, component: Register },
 ];
 
-const userRoutes = [
+const privateRoutes = [
     { path: RoutesConfig.home, component: Home },
     { path: RoutesConfig.project, component: Project },
     { path: RoutesConfig.device, component: Device },
+    { path: RoutesConfig.dashboard, component: Dashboard }
 ];
 
-const adminRoutes = [{ path: RoutesConfig.dashboard, component: Dashboard }];
 
-export { publicRoutes, userRoutes, adminRoutes };
+
+export { publicRoutes, privateRoutes };
