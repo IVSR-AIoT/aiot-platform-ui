@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Select from 'react-select';
 import { createProject, updateProject, getUserInProject } from '~/services/projectServices';
-import { isAdmin } from '~/hook/useAuth';
+import { isAdmin, isUser } from '~/hook/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -28,6 +28,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
             setSelectedUser(users);
         } catch (err) {
             console.log(err);
+            toast.error("error")
         }
     };
 
@@ -98,7 +99,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     value={projectForm.name}
                     name="name"
                     type="text"
-                    disabled={!isAdmin()}
+                    disabled={isUser()}
                     placeholder="Name"
                     className={`cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
                         !isAdmin() ? `cursor-not-allowed` : ''
@@ -119,7 +120,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     isMulti
                     onChange={setSelectedUser}
                     value={selectedUser}
-                    isDisabled={!isAdmin()}
+                    isDisabled={isUser()}
                 />
 
                 <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-[15px]">
@@ -135,7 +136,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     disabled={!isAdmin()}
                     placeholder="Description"
                     className={`cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none block w-full p-2.5 ${
-                        !isAdmin() ? `cursor-not-allowed` : ''
+                        isUser() ? `cursor-not-allowed` : ''
                     }`}
                 />
             </form>
@@ -149,11 +150,11 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                         Cancel
                     </button>
                     <button
-                        disabled={!isAdmin()}
+                        disabled={isUser()}
                         onClick={handleSubmit}
                         type="button"
                         className={`text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 w-[100px] ${
-                            !isAdmin() ? `cursor-not-allowed` : ''
+                            isUser() ? `cursor-not-allowed` : ''
                         }`}
                     >
                         Submit

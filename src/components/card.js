@@ -15,7 +15,7 @@ export default function Card({ data, getProjectData, setOpenDialog, getProjectFu
             toast.success('success');
             getProjectFunc();
         } catch (err) {
-            console.log(err);
+            toast.error("failed")
         }
     };
 
