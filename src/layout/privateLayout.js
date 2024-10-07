@@ -4,27 +4,27 @@ import { isAuthentication } from '~/hook/useAuth';
 import Header from '~/components/header';
 import Footer from '~/components/footer';
 import Sidebar from '~/components/sidebar';
-
+import { toast } from 'react-toastify';
 
 export default function PrivateRoute({ children }) {
     const navigate = useNavigate();
     useEffect(() => {
         if (!isAuthentication()) {
+            toast.warn("User does not exist")
             navigate('/login');
         }
     });
 
     return (
-        <div className="flex flex-col mt-[60px]">
-            <Header />
-            <div className="flex">
-                <Sidebar className="h-[100%] bg-gray-800" />
-                <div className=" w-[85%] ">
+        <div className="flex flex-col h-screen pt-[60px]">
+            <Header className="overflow-y-auto" />
+            <div className="flex h-full">
+                <Sidebar className=" w-[15%] bg-gray-800 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300" />
+                <div className=" w-[85%] h-full overflow-y-auto">
                     {children}
                     <Footer />
                 </div>
             </div>
-          
         </div>
     );
 }

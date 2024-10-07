@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreateUser } from '~/services/userService';
-import { toast, ToastContainer, Bounce } from 'react-toastify';
+import { toast} from 'react-toastify';
 
 function Register() {
     const navigate = useNavigate();
@@ -23,9 +23,9 @@ function Register() {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            
             const res = await CreateUser(registerForm);
-           toast.success("success")
+            console.log(res)
+            toast.success('success');
             navigate('/login');
         } catch (err) {
             console.log(err);
@@ -91,7 +91,6 @@ function Register() {
                     <p>Login?</p>
                 </a>
             </div>
-         
         </div>
     );
 }

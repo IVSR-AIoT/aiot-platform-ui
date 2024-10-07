@@ -20,7 +20,7 @@ function Header() {
     const userName = isAuthentication() ? getUser().name : '';
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
         navigate('/login');
     };
 

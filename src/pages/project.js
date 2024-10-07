@@ -5,12 +5,14 @@ import { getProject } from '~/services/projectServices';
 import Card from '~/components/card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function Project() {
     const [detailProject, setDetailProject] = useState(null);
     const [totalProjects, setTotalProjects] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
+    const navigate = useNavigate()
 
     const getProjectData = (data) => {
         setDetailProject(data);
@@ -30,6 +32,12 @@ export default function Project() {
             setTotalProjects(res.data);
         } catch (error) {
             console.log(error);
+            if(error.status === 401){
+                toast.error("Unauthorized");
+                
+                localStorage.removeItem("accessToken")
+                navigate("/login")
+            }
         }
     };
 

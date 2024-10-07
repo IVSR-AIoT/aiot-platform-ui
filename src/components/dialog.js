@@ -74,7 +74,7 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
             closeDialog();
             getProjectFunc();
         } catch (err) {
-            console.log(err);
+            toast.error('error');
         }
     };
 
@@ -109,6 +109,12 @@ export default function Dialog({ closeDialog, getProjectFunc, data }) {
                     Select user in project
                 </label>
                 <Select
+                    styles={{
+                        control: (provided) => ({
+                            ...provided,
+                            cursor: 'pointer', 
+                        }),
+                    }}
                     options={Users}
                     isMulti
                     onChange={setSelectedUser}

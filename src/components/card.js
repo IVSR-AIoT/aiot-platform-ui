@@ -1,6 +1,7 @@
 import { isAdmin } from '~/hook/useAuth';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { deleteProject } from '~/services/projectServices';
+import { Popconfirm } from 'antd';
 import { toast } from 'react-toastify';
 export default function Card({ data, getProjectData, setOpenDialog, getProjectFunc }) {
     const handleOpenDialog = () => {
@@ -24,11 +25,20 @@ export default function Card({ data, getProjectData, setOpenDialog, getProjectFu
                 <p>{data.project.name}</p>
                 {isAdmin() ? (
                     <div className="flex">
-                        <button onClick={deleteProjectFunc}>
-                            <DeleteOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
-                        </button>
+                        <Popconfirm
+                            title="Delete Project"
+                            description="Are you sure you want to delete this project?"
+                            onConfirm={deleteProjectFunc}
+                            okText="Yes"
+                            cancelText="No"
+                            placement='topLeft'
+                        >
+                            <button>
+                                <DeleteOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
+                            </button>
+                        </Popconfirm>
                         <button onClick={handleOpenDialog}>
-                            <EditOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
+                            <EditOutlined className="text-[20px] hover:text-blue-600 transition-colors ml-3" />
                         </button>
                     </div>
                 ) : (
