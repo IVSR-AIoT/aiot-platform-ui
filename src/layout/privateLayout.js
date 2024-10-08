@@ -4,14 +4,15 @@ import { isAuthentication } from '~/hook/useAuth';
 import Header from '~/components/header';
 import Footer from '~/components/footer';
 import Sidebar from '~/components/sidebar';
-import { toast } from 'react-toastify';
+import { message } from 'antd';
+
 
 export default function PrivateRoute({ children }) {
     const navigate = useNavigate();
     useEffect(() => {
         if (!isAuthentication()) {
-            toast.warn("User does not exist")
-            navigate('/login');
+            message.error("error in authentication")
+            navigate('/');
         }
     });
 

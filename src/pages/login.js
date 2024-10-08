@@ -1,6 +1,5 @@
-import 'react-toastify/dist/ReactToastify.css';
-import {useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { checkLogin } from '~/services/userService';
 import { message } from 'antd';
 
@@ -18,8 +17,8 @@ function Login() {
         try {
             const res = await checkLogin(loginForm);
             localStorage.setItem('accessToken', res.data.accessToken);
-            message.success('successful');
-            navigate('/');
+            message.success('Login successfully!');
+            navigate('/dashboard');
         } catch (err) {
             message.error('Login failed. Please check your credentials.');
         }
@@ -60,9 +59,9 @@ function Login() {
                 </button>
             </form>
 
-            <a href="/register" className="flex justify-center mt-10 text-[#8f8e8e]">
+            <Link to="/register" className="flex justify-center mt-10 text-[#8f8e8e]">
                 <p>Create new account?</p>
-            </a>
+            </Link>
         </div>
     );
 }

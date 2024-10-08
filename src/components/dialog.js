@@ -1,11 +1,13 @@
 import { Button, Form, Input, message, Modal, Select } from 'antd';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isAdmin, isUser } from '~/hook/useAuth';
 import { createProject, getUserInProject, updateProject } from '~/services/projectServices';
 import { getListUser } from '~/services/userService';
 
 function Dialog({ getProjectFunc, data, onclose }) {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [totalUser, setTotalUser] = useState([]);
     const [userInProject, setUserInProject] = useState([]);
@@ -17,16 +19,21 @@ function Dialog({ getProjectFunc, data, onclose }) {
         try {
             if (data) {
                 const res = await updateProject(data.project.id, value);
+                message.success('Project updated successfully');
             } else {
                 const res = await createProject(value);
+                form.resetFields();
+                message.success('Project created successfully');
             }
-            form.resetFields();
-            message.success('Project created successfully');
             setOpen(false);
             getProjectFunc();
             onclose();
         } catch (error) {
             message.error('Failed to create project');
+            if (error.status === 401) {
+                localStorage.removeItem('accessToken');
+                navigate('/');
+            }
         }
     };
 
@@ -46,6 +53,10 @@ function Dialog({ getProjectFunc, data, onclose }) {
             setTotalUser(users);
         } catch (error) {
             message.error('Error in getting user list');
+            if (error.status === 401) {
+                localStorage.removeItem('accessToken');
+                navigate('/');
+            }
         }
     };
 
@@ -55,21 +66,22 @@ function Dialog({ getProjectFunc, data, onclose }) {
             const projectUsers = res.data.map((item) => item.id);
             setUserInProject(projectUsers);
         } catch (error) {
-            console.log(error);
             message.error('Error in getting project users');
+            if (error.status === 401) {
+                localStorage.removeItem('accessToken');
+                navigate('/');
+            }
         }
     };
 
     useEffect(() => {
         if (data) {
             getUserByProjectId(data.project.id);
-        } else {
-            getTotalUser();
         }
     }, [data]);
 
     useEffect(() => {
-        if (data && userInProject.length > 0) {
+        if (data && userInProject.length >= 0) {
             form.setFieldsValue({
                 name: data.project.name,
                 description: data.project.description,
@@ -88,11 +100,11 @@ function Dialog({ getProjectFunc, data, onclose }) {
 
             <Modal
                 open={open || !!data}
-                title={isUser() ? 'View project' : (data ? 'Edit project' : 'Create a new project')}
-                okText={isAdmin() ? 'Submit' : null}
-                cancelText={isAdmin() ? 'Cancel' : null}
+                title={isUser() ? 'View project' : data ? 'Edit project' : 'Create a new project'}
+                okText={isAdmin() ? 'Submit' : ''}
+                cancelText={isAdmin() ? 'Cancel' : ''}
                 onCancel={handleCancel}
-                onOk={form.submit}
+                onOk={isAdmin() ? form.submit : undefined}
                 destroyOnClose
             >
                 <Form
@@ -116,7 +128,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                             },
                         ]}
                     >
-                        <Input placeholder="Name" disabled={isUser()} className="cursor-pointer" />
+                        <Input placeholder="Name" readOnly={isUser()} />
                     </Form.Item>
 
                     <Form.Item name="userIds" label="Users in Project">
@@ -129,12 +141,12 @@ function Dialog({ getProjectFunc, data, onclose }) {
                             onChange={(value) => setUserInProject(value)}
                             autoClearSearchValue={true}
                             disabled={isUser()}
-                            className="cursor-pointer"
+                            onFocus={getTotalUser}
                         />
                     </Form.Item>
 
                     <Form.Item name="description" label="Description">
-                        <Input.TextArea placeholder="Description" disabled={isUser()} className="cursor-pointer" />
+                        <Input.TextArea placeholder="Description" readOnly={isUser()} />
                     </Form.Item>
                 </Form>
             </Modal>

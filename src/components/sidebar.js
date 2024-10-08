@@ -36,12 +36,6 @@ const listItems = [
                 label: 'Device',
                 route: '/device',
             },
-            {
-                key: '4',
-                icon: <HomeOutlined />,
-                label: 'Home',
-                route: '/',
-            },
         ],
     },
     {
@@ -76,7 +70,18 @@ const listItems = [
 ];
 
 const getMenuItems = (isAdmin) => {
-    return isAdmin ? listItems : listItems.filter((item) => !item.roleId);
+    const filteredItem = listItems
+        .filter((item) => !item.roleId)
+        .map((item) => {
+            if (item.children) {
+                return {
+                    ...item,
+                    children: item.children.filter((childItem) => !childItem.roleId),
+                };
+            }
+        });
+
+    return isAdmin ? listItems : filteredItem;
 };
 
 const Sidebar = () => {
@@ -100,12 +105,9 @@ const Sidebar = () => {
 
     const onClick = (e) => {
         const clickItem = menuItems.flatMap((item) => item.children || [item]).find((item) => item.key === e.key);
-
         if (clickItem) {
             setSelectedKey(clickItem.key);
-            if (clickItem.route) {
-                navigate(clickItem.route);
-            }
+            navigate(clickItem.route);
         }
     };
 

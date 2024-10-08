@@ -9,15 +9,13 @@ import Register from '~/pages/register';
 const publicRoutes = [
     { path: RoutesConfig.login, component: Login },
     { path: RoutesConfig.register, component: Register },
+    { path: RoutesConfig.home, component: Home },
 ];
 
 const privateRoutes = [
-    { path: RoutesConfig.home, component: Home },
     { path: RoutesConfig.project, component: Project },
     { path: RoutesConfig.device, component: Device },
-    { path: RoutesConfig.dashboard, component: Dashboard }
+    { path: RoutesConfig.dashboard, component: Dashboard },
 ];
-
-
 
 export { publicRoutes, privateRoutes };

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreateUser } from '~/services/userService';
 import { message } from 'antd';
-
+import { Link } from 'react-router-dom';
 function Register() {
     const navigate = useNavigate();
     const [registerForm, setRegisterForm] = useState({
@@ -87,9 +87,9 @@ function Register() {
                         </button>
                     </form>
                 </div>
-                <a href="/login" className="flex justify-center mt-10 text-[#8f8e8e]">
+                <Link to="/login" className="flex justify-center mt-10 text-[#8f8e8e]">
                     <p>Login?</p>
-                </a>
+                </Link>
             </div>
         </div>
     );
