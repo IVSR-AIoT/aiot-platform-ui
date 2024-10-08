@@ -1,27 +1,29 @@
 import { isAdmin } from '~/hook/useAuth';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { deleteProject } from '~/services/projectServices';
-import { Popconfirm } from 'antd';
-import { toast } from 'react-toastify';
-export default function Card({ data, getProjectData, setOpenDialog, getProjectFunc }) {
-    const handleOpenDialog = () => {
-        getProjectData(data);
-        setOpenDialog(true);
-    };
+import { message, Popconfirm } from 'antd';
+import { useNavigate } from 'react-router-dom';
+export default function Card({ data, getProjectFunc, onclick }) {
+    const navigate = useNavigate();
 
     const deleteProjectFunc = async () => {
         try {
             const res = await deleteProject(data.project.id);
-            toast.success('success');
+            message.success('success');
             getProjectFunc();
-        } catch (err) {
-            toast.error("failed")
+            return res;
+        } catch (error) {
+            message.error('failed');
+            if (error.status === 401) {
+                localStorage.removeItem('accessToken');
+                navigate('/login');
+            }
         }
     };
 
     return (
-        <div className="w-[80%] h-[200px] p-4 bg-white border border-gray-200 rounded-lg shadow">
-            <div className="flex justify-between h-[40px] border-b-2">
+        <div className="w-[80%]  p-4 bg-white border border-gray-200 rounded-lg shadow">
+            <div className="flex justify-between h-[40px] border-b-2 items-center">
                 <p>{data.project.name}</p>
                 {isAdmin() ? (
                     <div className="flex">
@@ -31,18 +33,26 @@ export default function Card({ data, getProjectData, setOpenDialog, getProjectFu
                             onConfirm={deleteProjectFunc}
                             okText="Yes"
                             cancelText="No"
-                            placement='topLeft'
+                            placement="topLeft"
                         >
                             <button>
                                 <DeleteOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
                             </button>
                         </Popconfirm>
-                        <button onClick={handleOpenDialog}>
+                        <button
+                            onClick={() => {
+                                onclick(data);
+                            }}
+                        >
                             <EditOutlined className="text-[20px] hover:text-blue-600 transition-colors ml-3" />
                         </button>
                     </div>
                 ) : (
-                    <button onClick={handleOpenDialog}>
+                    <button
+                        onClick={() => {
+                            onclick(data);
+                        }}
+                    >
                         <EyeOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
                     </button>
                 )}

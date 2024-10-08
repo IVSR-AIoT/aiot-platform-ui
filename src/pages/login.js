@@ -1,8 +1,8 @@
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
+import {useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkLogin } from '~/services/userService';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { message } from 'antd';
 
 function Login() {
     const [loginForm, setLoginForm] = useState({
@@ -18,10 +18,10 @@ function Login() {
         try {
             const res = await checkLogin(loginForm);
             localStorage.setItem('accessToken', res.data.accessToken);
-            toast.success('successful');
+            message.success('successful');
             navigate('/');
         } catch (err) {
-            toast.error('Login failed. Please check your credentials.');
+            message.error('Login failed. Please check your credentials.');
         }
     };
 

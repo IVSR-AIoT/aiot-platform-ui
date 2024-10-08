@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreateUser } from '~/services/userService';
-import { toast} from 'react-toastify';
+import { message } from 'antd';
 
 function Register() {
     const navigate = useNavigate();
@@ -25,11 +25,11 @@ function Register() {
         try {
             const res = await CreateUser(registerForm);
             console.log(res)
-            toast.success('success');
+            message.success('success');
             navigate('/login');
         } catch (err) {
             console.log(err);
-            toast.error('Fail to register');
+            message.error('Fail to register');
         }
     };
 

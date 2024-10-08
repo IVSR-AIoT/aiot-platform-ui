@@ -73,29 +73,6 @@ const listItems = [
             },
         ],
     },
-    {
-        key: 'sub3',
-        label: 'Navigation Three',
-        icon: <SettingOutlined />,
-        children: [
-            {
-                key: '9',
-                label: 'Option 9',
-            },
-            {
-                key: '10',
-                label: 'Option 10',
-            },
-            {
-                key: '11',
-                label: 'Option 11',
-            },
-            {
-                key: '12',
-                label: 'Option 12',
-            },
-        ],
-    },
 ];
 
 const getMenuItems = (isAdmin) => {
