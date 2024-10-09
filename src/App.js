@@ -1,4 +1,4 @@
-import { publicRoutes, privateRoutes } from './routes/routes';
+import { publicRoutes, privateRoutes } from './routes';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PrivateRoute from './layout/privateLayout';
 
