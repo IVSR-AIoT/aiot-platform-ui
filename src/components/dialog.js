@@ -12,7 +12,6 @@ function Dialog({ getProjectFunc, data, onclose }) {
     const [userInProject, setUserInProject] = useState([]);
     const navigate = useNavigate;
     const onCreate = async (value) => {
-        
         value.description = value.description || '';
         value.userIds = value.userIds || [];
 
@@ -151,7 +150,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                     </Form.Item>
 
                     <Form.Item name="description" label="Description">
-                        <Input.TextArea placeholder="Description" readOnly={isUser()} />
+                        <Input.TextArea rows={5} placeholder="Description" readOnly={isUser()} />
                     </Form.Item>
                 </Form>
             </Modal>
