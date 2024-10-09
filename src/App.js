@@ -1,6 +1,6 @@
 import { publicRoutes, privateRoutes } from './routes/routes';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdminRoutes from './adminRoutes';
+import PrivateRoute from './layout/privateLayout';
 
 function App() {
     return (
@@ -19,9 +19,9 @@ function App() {
                             key={index}
                             path={route.path}
                             element={
-                                <AdminRoutes>
+                                <PrivateRoute>
                                     <Page />
-                                </AdminRoutes>
+                                </PrivateRoute>
                             }
                         />
                     );
