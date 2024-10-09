@@ -1,5 +1,5 @@
 import {
-    HomeOutlined,
+
     SignalFilled,
     MailOutlined,
     SettingOutlined,
@@ -20,7 +20,6 @@ const listItems = [
             {
                 key: '1',
                 icon: <SignalFilled />,
-                roleId: 2,
                 label: 'Dashboard',
                 route: '/dashboard',
             },
@@ -41,7 +40,7 @@ const listItems = [
     {
         key: 'sub2',
         label: 'Hello',
-        roleId: 2,
+        roleid: 2,
         icon: <MailOutlined />,
     },
     {
@@ -63,6 +62,7 @@ const listItems = [
             },
             {
                 key: '12',
+                roleid: 2,
                 label: 'Option 12',
             },
         ],
@@ -71,14 +71,15 @@ const listItems = [
 
 const getMenuItems = (isAdmin) => {
     const filteredItem = listItems
-        .filter((item) => !item.roleId)
+        .filter((item) => !item.roleid)
         .map((item) => {
             if (item.children) {
                 return {
                     ...item,
-                    children: item.children.filter((childItem) => !childItem.roleId),
+                    children: item.children.filter((childItem) => !childItem.roleid),
                 };
             }
+            return null;
         });
 
     return isAdmin ? listItems : filteredItem;

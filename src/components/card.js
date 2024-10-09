@@ -34,7 +34,7 @@ export default function Card({ data, getProjectFunc, onclick }) {
     };
 
     return (
-        <div className="w-[80%]  p-4 bg-white border border-gray-200 rounded-lg shadow line-clamp-6">
+        <div className="w-[85%]  p-4 bg-white border border-gray-200 rounded-lg shadow line-clamp-6">
             <div className="flex justify-between h-[40px] border-b-2 items-center">
                 <p
                     onClick={() => {
