@@ -1,4 +1,3 @@
-
 export const isAuthentication = () => {
     return localStorage.getItem('accessToken') !== null;
 };
@@ -9,7 +8,7 @@ export const getUser = () => {
         return null;
     }
     const payload = JSON.parse(atob(token.split('.')[1]));
-    
+
     return payload;
 };
 
@@ -22,4 +21,3 @@ export const isUser = () => {
     const user = getUser();
     return user && user.roleId === 2;
 };
-

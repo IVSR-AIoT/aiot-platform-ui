@@ -7,24 +7,24 @@ import { getListUser } from '~/services/userService';
 
 function Dialog({ getProjectFunc, data, onclose }) {
     const [form] = Form.useForm();
-    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [totalUser, setTotalUser] = useState([]);
     const [userInProject, setUserInProject] = useState([]);
-
+    const navigate = useNavigate;
     const onCreate = async (value) => {
+        
         value.description = value.description || '';
         value.userIds = value.userIds || [];
 
         try {
             if (data) {
-                const res = await updateProject(data.project.id, value);
+                await updateProject(data.project.id, value);
                 message.success('Project updated successfully');
             } else {
-                const res = await createProject(value);
-                form.resetFields();
+                await createProject(value);
                 message.success('Project created successfully');
             }
+            form.resetFields();
             setOpen(false);
             getProjectFunc();
             onclose();
@@ -39,8 +39,8 @@ function Dialog({ getProjectFunc, data, onclose }) {
 
     const handleCancel = () => {
         setOpen(false);
-        onclose();
         form.resetFields();
+        onclose();
     };
 
     const getTotalUser = async () => {
@@ -63,7 +63,10 @@ function Dialog({ getProjectFunc, data, onclose }) {
     const getUserByProjectId = async (projectId) => {
         try {
             const res = await getUserInProject(projectId);
-            const projectUsers = res.data.map((item) => item.id);
+            const projectUsers = res.data.map((item) => ({
+                label: item.email,
+                value: item.id,
+            }));
             setUserInProject(projectUsers);
         } catch (error) {
             message.error('Error in getting project users');
@@ -135,13 +138,15 @@ function Dialog({ getProjectFunc, data, onclose }) {
                         <Select
                             mode="multiple"
                             style={{ width: '100%' }}
-                            placeholder="Select or add users"
+                            placeholder="Search or select users"
                             options={totalUser}
                             value={userInProject}
                             onChange={(value) => setUserInProject(value)}
+                            showSearch
+                            optionFilterProp="label"
+                            onFocus={getTotalUser}
                             autoClearSearchValue={true}
                             disabled={isUser()}
-                            onFocus={getTotalUser}
                         />
                     </Form.Item>
 

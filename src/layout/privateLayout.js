@@ -6,13 +6,12 @@ import Footer from '~/components/footer';
 import Sidebar from '~/components/sidebar';
 import { message } from 'antd';
 
-
 export default function PrivateRoute({ children }) {
     const navigate = useNavigate();
     useEffect(() => {
         if (!isAuthentication()) {
-            message.error("error in authentication")
-            navigate('/');
+            message.error('error in authentication');
+            navigate('/login');
         }
     });
 

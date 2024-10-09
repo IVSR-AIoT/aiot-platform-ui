@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import Dialog from '~/components/dialog';
 import { getProject } from '~/services/projectServices';
 import Card from '~/components/card';
+import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 export default function Project() {
     const [totalProjects, setTotalProjects] = useState([]);
-    const navigate = useNavigate();
+    const navigate = useNavigate
     const [selectedProject, setSelectedProject] = useState(null);
     const handleGetProject = (data) => {
         setSelectedProject(data);
@@ -20,9 +21,10 @@ export default function Project() {
             const res = await getProject();
             setTotalProjects(res.data);
         } catch (error) {
+            message.error(error);
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
-                navigate('/login');
+                navigate('/');
             }
         }
     };
@@ -31,7 +33,7 @@ export default function Project() {
     }, []);
 
     return (
-        <div className='h-screen'>
+        <div className="h-screen">
             <div className="mt-[20px] ml-[20px]">
                 <Dialog data={selectedProject} onclose={handleCloseDialog} getProjectFunc={getProjectFunc} />
             </div>
