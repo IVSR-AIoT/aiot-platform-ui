@@ -19,7 +19,6 @@ export const isAdmin = () => {
 };
 
 
-
 export const isUser = () => {
     const user = getUser();
     return user && user.roleId === 2;
