@@ -1,4 +1,3 @@
-
 export const isAuthentication = () => {
     return localStorage.getItem('accessToken') !== null;
 };
@@ -22,5 +21,3 @@ export const isUser = () => {
     const user = getUser();
     return user && user.roleId === 2;
 };
-
-

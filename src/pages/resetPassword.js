@@ -28,8 +28,6 @@ export default function ResetPassword() {
         const currentTime = Math.floor(Date.now() / 1000);
         const timeLeftInMilliseconds = (payload.exp - currentTime) * 1000;
 
-
-
         if (timeLeftInMilliseconds <= 0) {
             confirm();
             return;
@@ -37,7 +35,7 @@ export default function ResetPassword() {
 
         const timeout = setTimeout(() => {
             confirm();
-        }, 10000);
+        }, timeLeftInMilliseconds);
 
         return () => {
             clearTimeout(timeout);
@@ -52,14 +50,18 @@ export default function ResetPassword() {
     };
 
     const handleSubmit = async () => {
+        localStorage.setItem('accessToken', params.token);
         if (form.password !== form.confirmPassword) {
             message.error('Password and confirm password do not match');
             return;
         } else {
             try {
-                await updatePassword(form.password);
+                await updatePassword({ password: form.password });
+                localStorage.removeItem('accessToken');
+                navigate("/login")
                 message.success('Password changed successfully');
             } catch (error) {
+                console.log(error);
                 message.error('Failed to change password');
             }
         }
