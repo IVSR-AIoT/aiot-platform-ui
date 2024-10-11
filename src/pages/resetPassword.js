@@ -58,10 +58,9 @@ export default function ResetPassword() {
             try {
                 await updatePassword({ password: form.password });
                 localStorage.removeItem('accessToken');
-                navigate("/login")
+                navigate('/login');
                 message.success('Password changed successfully');
             } catch (error) {
-                console.log(error);
                 message.error('Failed to change password');
             }
         }
@@ -69,20 +68,22 @@ export default function ResetPassword() {
 
     return (
         <div className="flex justify-center items-center w-screen h-screen">
-            <div className="w-[350px] h-[400px]">
-                <h1 className="text-[45px] font-medium text-center mb-16">Reset password</h1>
+            <div className="w-[350px] h-[400px] shadow-2xl rounded-2xl px-4 py-8">
+                <h1 className="text-[30px] text-center font-bold mb-5">AIOT Platform</h1>
+                <h1 className="text-[30px] text-center mb-5">Change Your Password</h1>
+                <p className='mb-7 text-[13px]'>Enter a new password below to change your password</p>
                 <Input.Password
                     placeholder="New password"
                     name="password"
                     value={form.password}
-                    className="mb-4"
+                    className="mb-5"
                     onChange={handleChangeValue}
                 />
                 <Input.Password
                     placeholder="Confirm password"
                     name="confirmPassword"
                     value={form.confirmPassword}
-                    className="mb-4"
+                    className="mb-5"
                     onChange={handleChangeValue}
                 />
                 <div className="flex justify-center">
