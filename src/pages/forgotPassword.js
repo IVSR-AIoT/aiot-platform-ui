@@ -24,7 +24,7 @@ export default function ForgotPassword() {
                 <h1 className="text-[24px] text-center mb-8">Forgot your Password</h1>
                 <div className="w-full">
                     <Input
-                    className='pt-2'
+                        className="pt-2"
                         placeholder="Enter your email"
                         value={email}
                         type="email"
