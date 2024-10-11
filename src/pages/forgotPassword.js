@@ -1,24 +1,29 @@
-import { Input, Button, message } from 'antd';
+import { Input, Button, message, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { forgotPassword } from '~/services/userService';
 import { useNavigate } from 'react-router-dom';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
         const data = { email: email };
+        setLoading(true);
         try {
             await forgotPassword(data);
             message.success('Submit successful!');
         } catch (error) {
             message.error('Fail to submit email');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center h-screen bg-[#F4F6F9]">
             <div className="w-[350px] h-[280px] p-6 shadow-2xl rounded-xl">
                 <h2 className="text-[30px] text-center font-bold ">AIOT platform</h2>
                 <h1 className="text-[24px] text-center mb-8">Forgot your Password</h1>
@@ -35,7 +40,7 @@ export default function ForgotPassword() {
                     />
 
                     <Button type="primary" className="w-full mt-5 mb-3" onClick={handleSubmit}>
-                        Submit
+                        {!loading ? 'Submit' : <Spin className="text-white" indicator={<LoadingOutlined spin />} />}
                     </Button>
                     <Button
                         type="text"
@@ -44,7 +49,7 @@ export default function ForgotPassword() {
                             navigate('/');
                         }}
                     >
-                        Back to home
+                        Back home
                     </Button>
                 </div>
             </div>

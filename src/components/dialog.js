@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Modal, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAdmin, isUser } from '~/hook/useAuth';
 import { createProject, getUserInProject, updateProject } from '~/services/projectServices';
@@ -59,28 +59,31 @@ function Dialog({ getProjectFunc, data, onclose }) {
         }
     };
 
-    const getUserByProjectId = async (projectId) => {
-        try {
-            const res = await getUserInProject(projectId);
-            const projectUsers = res.data.map((item) => ({
-                label: item.email,
-                value: item.id,
-            }));
-            setUserInProject(projectUsers);
-        } catch (error) {
-            message.error('Error in getting project users');
-            if (error.status === 401) {
-                localStorage.removeItem('accessToken');
-                navigate('/');
+    const getUserByProjectId = useCallback(
+        async (projectId) => {
+            try {
+                const res = await getUserInProject(projectId);
+                const projectUsers = res.data.map((item) => ({
+                    label: item.email,
+                    value: item.id,
+                }));
+                setUserInProject(projectUsers);
+            } catch (error) {
+                message.error('Error in getting project users');
+                if (error.status === 401) {
+                    localStorage.removeItem('accessToken');
+                    navigate('/');
+                }
             }
-        }
-    };
+        },
+        [navigate],
+    );
 
     useEffect(() => {
         if (data) {
             getUserByProjectId(data.project.id);
         }
-    }, [data]);
+    }, [data, getUserByProjectId]);
 
     useEffect(() => {
         if (data && userInProject.length >= 0) {
@@ -90,7 +93,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                 userIds: userInProject,
             });
         }
-    }, [userInProject, data]);
+    }, [userInProject, data, form]);
 
     return (
         <>
@@ -130,7 +133,15 @@ function Dialog({ getProjectFunc, data, onclose }) {
                             },
                         ]}
                     >
-                        <Input placeholder="Name" readOnly={isUser()} />
+                        <Input
+                            placeholder="Name"
+                            className={`${
+                                isUser()
+                                    ? 'focus:outline-none focus:border-[#d9d9d9] focus:ring-0 hover:border-[#d9d9d9] shadow-none active:shadow-none active:border-[#d9d9d9]'
+                                    : ''
+                            }`}
+                            readOnly={isUser()}
+                        />
                     </Form.Item>
 
                     <Form.Item name="userIds" label="Users in Project">
@@ -150,7 +161,16 @@ function Dialog({ getProjectFunc, data, onclose }) {
                     </Form.Item>
 
                     <Form.Item name="description" label="Description">
-                        <Input.TextArea rows={5} placeholder="Description" readOnly={isUser()} />
+                        <Input.TextArea
+                            rows={5}
+                            className={`${
+                                isUser()
+                                    ? 'focus:outline-none focus:border-[#d9d9d9] focus:ring-0 hover:border-[#d9d9d9] shadow-none active:shadow-none active:border-[#d9d9d9] '
+                                    : ''
+                            }`}
+                            placeholder="Description"
+                            readOnly={isUser()}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>
