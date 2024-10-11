@@ -12,7 +12,6 @@ function Dialog({ getProjectFunc, data, onclose }) {
     const [userInProject, setUserInProject] = useState([]);
     const navigate = useNavigate;
     const onCreate = async (value) => {
-        
         value.description = value.description || '';
         value.userIds = value.userIds || [];
 
