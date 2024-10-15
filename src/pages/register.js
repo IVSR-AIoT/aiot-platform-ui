@@ -24,12 +24,14 @@ function Register() {
         e.preventDefault();
         try {
             const res = await CreateUser(registerForm);
-            console.log(res)
-            message.success('success');
+            console.log(res);
+            message.success('Success');
             navigate('/login');
         } catch (err) {
             console.log(err);
-            message.error('Fail to register');
+            message.error(
+                'Registration failed. The email or telephone number is already in use. Please try a different email or telephone number.',
+            );
         }
     };
 

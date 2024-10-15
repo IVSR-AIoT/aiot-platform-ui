@@ -6,7 +6,7 @@ export const columns = [
         dataIndex: 'checked',
         key: 'checked',
         render: (_, record) => {
-            return <Switch value={record.isReplied} />;
+            return <Switch checkedChildren="Replied" unCheckedChildren="Not Replied" value={record.isReplied} />;
         },
     },
     {

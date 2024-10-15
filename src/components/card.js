@@ -11,7 +11,7 @@ export default function Card({ data, getProjectFunc, onclick }) {
         modal.confirm({
             title: 'Confirm Deletion',
             icon: <ExclamationCircleOutlined />,
-            content: 'Are you sure you want to delete this project?',
+            content: 'Do you want to delete this project?',
             okText: 'Yes',
             cancelText: 'No',
             onOk: deleteProjectFunc,

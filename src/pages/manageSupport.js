@@ -5,7 +5,7 @@ import SupportDialog from '~/components/supportDialog';
 import { getList, getListByQuery } from '~/services/supportService';
 import { columns } from '~/configs/columnSupport';
 import useDebounce from '~/hook/useDebounce';
-
+import { formatDate } from '~/configs/utils';
 export default function ManageSupport() {
     const [supportRequests, setSupportRequests] = useState([]);
     const [detailRequest, setDetailRequest] = useState();
@@ -27,8 +27,8 @@ export default function ManageSupport() {
                     subject: item.title,
                     name: item.user.name,
                     id: item.user.id,
-                    createdAt: item.createdAt.substring(0, 10),
-                    updatedAt: item.updatedAt.substring(0, 10),
+                    createdAt: formatDate(item.createdAt),
+                    updatedAt: item.isReplied ? formatDate(item.updatedAt) : '',
                     description: item.description,
                     adminResponse: item.reply,
                     projectId: item.id,

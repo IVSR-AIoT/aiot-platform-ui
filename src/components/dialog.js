@@ -18,17 +18,17 @@ function Dialog({ getProjectFunc, data, onclose }) {
         try {
             if (data) {
                 await updateProject(data.project.id, value);
-                message.success('Project updated successfully');
+                message.success('Your project has been successfully updated.');
             } else {
                 await createProject(value);
-                message.success('Project created successfully');
+                message.success('Your project has been successfully created.');
             }
             form.resetFields();
             setOpen(false);
             getProjectFunc();
             onclose();
         } catch (error) {
-            message.error('Failed to create project');
+            message.error('There was an error creating the project.');
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
                 navigate('/');
@@ -51,7 +51,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
             }));
             setTotalUser(users);
         } catch (error) {
-            message.error('Error in getting user list');
+            message.error('Failed to fetch the user list.');
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
                 navigate('/');
@@ -69,7 +69,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                 }));
                 setUserInProject(projectUsers);
             } catch (error) {
-                message.error('Error in getting project users');
+                message.error('There was an error while loading project of users.');
                 if (error.status === 401) {
                     localStorage.removeItem('accessToken');
                     navigate('/');
