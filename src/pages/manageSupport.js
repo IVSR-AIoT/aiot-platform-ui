@@ -3,8 +3,9 @@ import Search from 'antd/es/input/Search';
 import React, { useCallback, useEffect, useState } from 'react';
 import SupportDialog from '~/components/supportDialog';
 import { getList, getListByQuery } from '~/services/supportService';
-import { columns } from '~/configs/columnSupport';
+import { columns as initialColumns } from '~/configs/columnSupport';
 import useDebounce from '~/hook/useDebounce';
+import dayjs from 'dayjs';
 
 export default function ManageSupport() {
     const [supportRequests, setSupportRequests] = useState([]);
@@ -12,6 +13,18 @@ export default function ManageSupport() {
     const [query, setQuery] = useState('');
 
     const debouncedValue = useDebounce(query, 500);
+
+    const columns = initialColumns.map((col) => {
+        if (col.dataIndex === 'checked') {
+            return {
+                ...col,
+                onCell: (record) => ({
+                    onClick: () => handleRowClick(record), 
+                }),
+            };
+        }
+        return col;
+    });
 
     const getSupportRequests = useCallback(async () => {
         try {
@@ -23,12 +36,13 @@ export default function ManageSupport() {
             }
 
             const data = res.map((item) => {
+                console.log(res);
                 return {
                     subject: item.title,
                     name: item.user.name,
                     id: item.user.id,
-                    createdAt: item.createdAt.substring(0, 10),
-                    updatedAt: item.updatedAt.substring(0, 10),
+                    createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+                    updatedAt: item.isReplied ? dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss') : '',
                     description: item.description,
                     adminResponse: item.reply,
                     projectId: item.id,
@@ -52,22 +66,17 @@ export default function ManageSupport() {
     };
     return (
         <div className="h-full">
-            <Search
-                className="my-[20px]"
-                placeholder="Search issue or description"
-                value={query}
-                onChange={(e) => {
-                    setQuery(e.target.value);
-                }}
-            />
-            <Table
-                pagination={{ pageSize: 20 }}
-                dataSource={supportRequests}
-                columns={columns}
-                onRow={(record, rowIndex) => ({
-                    onClick: () => handleRowClick(record, rowIndex),
-                })}
-            />
+            <div className="p-3 w-[30%]">
+                <Search
+                    className="my-[20px]"
+                    placeholder="Search issue or description"
+                    value={query}
+                    onChange={(e) => {
+                        setQuery(e.target.value);
+                    }}
+                />
+            </div>
+            <Table pagination={{ pageSize: 20 }} dataSource={supportRequests} columns={columns} />
             <SupportDialog
                 detailRequest={detailRequest}
                 closeDialog={handleCloseDialog}

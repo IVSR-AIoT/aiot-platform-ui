@@ -73,16 +73,14 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
                                 <Radio value="Telegram">Telegram</Radio>
                             </Radio.Group>
                         </Form.Item>
-                        <Form.Item name="reply" label="Description">
-                            <TextArea
-                                rows={7}
-                                readOnly={detailRequest?.isReplied}
-                                className={`${
-                                    detailRequest?.isReplied
-                                        ? 'focus:outline-none focus:border-[#d9d9d9] focus:ring-0 hover:border-[#d9d9d9] shadow-none active:shadow-none active:border-[#d9d9d9] '
-                                        : ''
-                                }`}
-                            />
+                        <Form.Item name="reply" label="Reply">
+                            {detailRequest?.isReplied ? (
+                                <p className="text-gray-800 font-semibold">{detailRequest?.adminResponse}</p>
+                            ) : (
+                                <TextArea
+                                    rows={7}
+                                />
+                            )}
                         </Form.Item>
                     </Form>
                 </Spin>
