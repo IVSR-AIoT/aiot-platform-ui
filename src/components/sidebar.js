@@ -1,5 +1,4 @@
 import {
-
     SignalFilled,
     MailOutlined,
     SettingOutlined,
@@ -39,7 +38,8 @@ const listItems = [
     },
     {
         key: 'sub2',
-        label: 'Hello',
+        label: 'Manage Support',
+        route: '/manage-support',
         roleid: 2,
         icon: <MailOutlined />,
     },
