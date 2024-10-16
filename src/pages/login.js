@@ -17,10 +17,10 @@ function Login() {
         try {
             const res = await checkLogin(loginForm);
             localStorage.setItem('accessToken', res.data.accessToken);
-            message.success('Login successfully!');
+            message.success('Successfully logged in');
             navigate('/dashboard');
         } catch (err) {
-            message.error('Login failed. Please check your credentials.');
+            message.error('Login attempt failed. Please re-enter your username and password.');
         }
     };
 

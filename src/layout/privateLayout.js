@@ -10,7 +10,7 @@ export default function PrivateRoute({ children }) {
     const navigate = useNavigate();
     useEffect(() => {
         if (!isAuthentication()) {
-            message.error('error in authentication');
+            message.error('There was an error with the authentication process. You must log in again to continue.');
             navigate('/login');
         }
     });
