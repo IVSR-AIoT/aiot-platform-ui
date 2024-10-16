@@ -4,6 +4,7 @@ import { getProject } from '~/services/projectServices';
 import Card from '~/components/card';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import CreateSupportModal from '~/components/createSupportModal';
 
 export default function Project() {
     const [totalProjects, setTotalProjects] = useState([]);
@@ -47,6 +48,7 @@ export default function Project() {
                     );
                 })}
             </div>
+            <CreateSupportModal/>
         </div>
     );
 }

@@ -38,6 +38,7 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
 
     const handleOk = () => {
         form.submit();
+        
     };
 
     const handleCancel = () => {
@@ -50,7 +51,7 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
             <Modal
                 title="Customer Support Response"
                 open={isModalOpen}
-                onOk={detailRequest?.isReplied ? null : handleOk}
+                onOk={handleOk}
                 onCancel={handleCancel}
                 confirmLoading={loading}
                 okButtonProps={{ style: { display: detailRequest?.isReplied ? 'none' : 'inline-block' } }}

@@ -5,6 +5,11 @@ export const getList = async () => {
     return response.data;
 };
 
+export const CreateIssueService = async (data)=>{
+    const response = await api.post("/support", data)
+    return response
+}
+
 export const getListByQuery = async (data) => {
     const response = await api.get(`/support?q=${data}`);
     return response.data;
