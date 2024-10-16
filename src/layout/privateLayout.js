@@ -17,10 +17,10 @@ export default function PrivateRoute({ children }) {
 
     return (
         <div className="flex flex-col h-screen pt-[60px]">
-            <Header className="overflow-y-auto" />
+            <Header />
             <div className="flex h-full">
                 <Sidebar className=" w-[15%] bg-gray-800 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300" />
-                <div className=" w-[85%] h-full overflow-y-auto">
+                <div className=" w-[85%] overflow-y-auto">
                     {children}
                     <Footer />
                 </div>
