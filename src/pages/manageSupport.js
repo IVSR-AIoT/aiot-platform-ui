@@ -5,7 +5,7 @@ import SupportDialog from '~/components/supportDialog';
 import { getList, getListByQuery } from '~/services/supportService';
 import { columns as initialColumns } from '~/configs/columnSupport';
 import useDebounce from '~/hook/useDebounce';
-import dayjs from 'dayjs';
+import { formatDate } from '~/configs/utils';
 
 export default function ManageSupport() {
     const [supportRequests, setSupportRequests] = useState([]);
@@ -19,7 +19,7 @@ export default function ManageSupport() {
             return {
                 ...col,
                 onCell: (record) => ({
-                    onClick: () => handleRowClick(record), 
+                    onClick: () => handleRowClick(record),
                 }),
             };
         }
@@ -34,19 +34,20 @@ export default function ManageSupport() {
             } else {
                 res = await getListByQuery(debouncedValue);
             }
-
             const data = res.map((item) => {
-                console.log(res);
                 return {
                     subject: item.title,
-                    name: item.user.name,
-                    id: item.user.id,
-                    createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-                    updatedAt: item.isReplied ? dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss') : '',
+                    username: item.user.name,
+                    userEmail: item.user.email,
+                    id: item.id,
+                    createdAt: formatDate(item.createdAt),
+                    updatedAt: item.isReplied ? formatDate(item.updatedAt) : '',
                     description: item.description,
                     adminResponse: item.reply,
                     projectId: item.id,
                     isReplied: item.isReplied,
+                    adminName: item.isReplied ? item.admin.name : '',
+                    adminEmail: item.isReplied ? item.admin.email : '',
                 };
             });
             setSupportRequests(data);

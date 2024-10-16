@@ -22,7 +22,7 @@ export default function Card({ data, getProjectFunc, onclick }) {
     };
 
     const deleteProjectFunc = async () => {
-        setLoading(true); // Start loading
+        setLoading(true); 
         try {
             const res = await deleteProject(data.project.id);
             message.success('Delete successful!');

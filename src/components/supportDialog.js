@@ -53,6 +53,7 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
                 onOk={detailRequest?.isReplied ? null : handleOk}
                 onCancel={handleCancel}
                 confirmLoading={loading}
+                okButtonProps={{ style: { display: detailRequest?.isReplied ? 'none' : 'inline-block' } }}
             >
                 <Spin spinning={loading}>
                     <Form form={form} onFinish={replySupportRequest}>
@@ -61,25 +62,32 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
                                 {detailRequest?.subject || 'No subject provided'}
                             </p>
                         </Form.Item>
+                        {detailRequest?.isReplied && (
+                            <Form.Item label="Replied by:">
+                                <p className="text-gray-800 font-semibold">
+                                    {detailRequest?.adminName} <span>- {detailRequest?.adminEmail}</span>
+                                </p>
+                            </Form.Item>
+                        )}
                         <Form.Item label="User:">
-                            <p className="text-gray-800 font-semibold">{detailRequest?.name}</p>
+                            <p className="text-gray-800 font-semibold">
+                                {detailRequest?.username} <span>- {detailRequest?.userEmail}</span>
+                            </p>
                         </Form.Item>
                         <Form.Item label="Issue Description:">
                             <p className="text-gray-800 font-semibold">{detailRequest?.description}</p>
                         </Form.Item>
-                        <Form.Item label="Notification Method">
-                            <Radio.Group defaultValue="Email">
-                                <Radio value="Email">Email</Radio>
-                                <Radio value="Telegram">Telegram</Radio>
+                        <Form.Item label="Notification Method" name={'method'} >
+                            <Radio.Group defaultValue="email">
+                                <Radio value="email">Email</Radio>
+                                <Radio value="message">Message</Radio>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item name="reply" label="Reply">
                             {detailRequest?.isReplied ? (
                                 <p className="text-gray-800 font-semibold">{detailRequest?.adminResponse}</p>
                             ) : (
-                                <TextArea
-                                    rows={7}
-                                />
+                                <TextArea rows={7} />
                             )}
                         </Form.Item>
                     </Form>

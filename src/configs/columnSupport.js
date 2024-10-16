@@ -7,51 +7,53 @@ export const columns = [
         key: 'checked',
         render: (_, record) => {
             return (
-                <Tooltip title={'click to open dialog for response issue'} placement='topLeft' color='volcano'>
-                    <Switch value={record.isReplied} checkedChildren="Replied" unCheckedChildren="Not Replied" />
+                <Tooltip title={'Click to open dialog for response issue'} placement="topLeft" color="volcano">
+                    <Switch checked={record.isReplied} checkedChildren="Replied" unCheckedChildren="Not Replied" />
                 </Tooltip>
             );
         },
-        width: 140,
+        width: 120,
+    },
+    {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+        ellipsis: true,
+        width: 70, 
     },
     {
         title: 'Issue Subject',
         dataIndex: 'subject',
         key: 'subject',
         ellipsis: true,
+        width: 180, 
     },
     {
         title: 'User Name',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'username',
+        key: 'username',
         ellipsis: true,
         width: 120,
-    },
-    {
-        title: 'User ID',
-        dataIndex: 'id',
-        key: 'id',
-        ellipsis: true,
-        width: 80,
     },
     {
         title: 'Request Date',
         dataIndex: 'createdAt',
         key: 'createdAt',
         ellipsis: true,
-        width: 160,
+        width: 140, 
     },
     {
         title: 'Response Date',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         ellipsis: true,
-        width: 160,
+        width: 140, 
     },
     {
         title: 'Admin Response',
-        dataIndex: 'adminResponse',
-        key: 'adminResponse',
+        dataIndex: 'adminName',
+        key: 'adminName',
         ellipsis: true,
+        width: 150, 
     },
 ];

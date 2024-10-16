@@ -132,7 +132,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                     }}
                     onFinish={onCreate}
                 >
-                    <Form.Item name="name" label="Name:">
+                    <Form.Item name="name" label="Name:" required={!isUser() && true}>
                         {isUser() ? (
                             <p className="text-gray-800 font-semibold">{form.getFieldValue('name')}</p>
                         ) : (
@@ -141,25 +141,37 @@ function Dialog({ getProjectFunc, data, onclose }) {
                     </Form.Item>
 
                     <Form.Item name="userIds" label="Users in Project:">
-                        <Select
-                            mode="multiple"
-                            style={{ width: '100%' }}
-                            placeholder="Search or select users"
-                            options={totalUser}
-                            value={userInProject}
-                            onChange={(value) => {
-                                setUserInProject(value);
-                            }}
-                            showSearch
-                            optionFilterProp="label"
-                            onFocus={getTotalUser}
-                            autoClearSearchValue={true}
-                            disabled={isUser()}
-                        />
+                        {isUser() ? (
+                            <ul>
+                                {userInProject.map((item, index) => {
+                                    return (
+                                        <li className="text-gray-800 font-semibold" key={index}>
+                                            {item.label}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <Select
+                                mode="multiple"
+                                style={{ width: '100%' }}
+                                placeholder="Search or select users"
+                                options={totalUser}
+                                value={userInProject}
+                                onChange={(value) => {
+                                    setUserInProject(value);
+                                }}
+                                showSearch
+                                optionFilterProp="label"
+                                onFocus={getTotalUser}
+                                autoClearSearchValue={true}
+                                disabled={isUser()}
+                            />
+                        )}
                     </Form.Item>
 
                     <Form.Item name="description" label="Description:">
-                        {isUser ? (
+                        {!isUser() ? (
                             <Input.TextArea rows={5} placeholder="Description" />
                         ) : (
                             <p className="text-gray-800 font-semibold">{form.getFieldValue('description')}</p>
