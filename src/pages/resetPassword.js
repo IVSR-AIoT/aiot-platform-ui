@@ -71,7 +71,7 @@ export default function ResetPassword() {
             <div className="w-[350px] h-[400px] shadow-2xl rounded-2xl px-4 py-8">
                 <h1 className="text-[30px] text-center font-bold mb-5">AIOT Platform</h1>
                 <h1 className="text-[30px] text-center mb-5">Change Your Password</h1>
-                <p className='mb-7 text-[13px]'>Enter a new password</p>
+                <p className="mb-7 text-center text-[13px]">Enter new password</p>
                 <Input.Password
                     placeholder="New password"
                     name="password"

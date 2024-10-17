@@ -15,20 +15,28 @@ function Dialog({ getProjectFunc, data, onclose }) {
         value.description = value.description || '';
         value.userIds = value.userIds || [];
 
+        value.userIds = value.userIds.map((item) => {
+            if (typeof item === 'object') {
+                return item.value;
+            }
+            return item;
+        });
+
+        console.log(value);
         try {
             if (data) {
                 await updateProject(data.project.id, value);
-                message.success('Project updated successfully');
+                message.success('Your project has been successfully updated.');
             } else {
                 await createProject(value);
-                message.success('Project created successfully');
+                message.success('Your project has been successfully created.');
             }
             form.resetFields();
             setOpen(false);
             getProjectFunc();
             onclose();
         } catch (error) {
-            message.error('Failed to create project');
+            message.error('There was an error creating the project.');
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
                 navigate('/');
@@ -51,7 +59,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
             }));
             setTotalUser(users);
         } catch (error) {
-            message.error('Error in getting user list');
+            message.error('Failed to fetch the user list.');
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
                 navigate('/');
@@ -69,7 +77,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
                 }));
                 setUserInProject(projectUsers);
             } catch (error) {
-                message.error('Error in getting project users');
+                message.error('There was an error while loading project of users.');
                 if (error.status === 401) {
                     localStorage.removeItem('accessToken');
                     navigate('/');
@@ -111,9 +119,10 @@ function Dialog({ getProjectFunc, data, onclose }) {
                 onCancel={handleCancel}
                 onOk={isAdmin() ? form.submit : undefined}
                 destroyOnClose
+                okButtonProps={{ style: { display: isUser() ? 'none' : 'inline-block' } }}
             >
                 <Form
-                    layout="vertical"
+                    layout={!isUser() ? 'vertical' : null}
                     form={form}
                     name="form_in_modal"
                     initialValues={{
@@ -123,54 +132,50 @@ function Dialog({ getProjectFunc, data, onclose }) {
                     }}
                     onFinish={onCreate}
                 >
-                    <Form.Item
-                        name="name"
-                        label="Name"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the name of the project!',
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Name"
-                            className={`${
-                                isUser()
-                                    ? 'focus:outline-none focus:border-[#d9d9d9] focus:ring-0 hover:border-[#d9d9d9] shadow-none active:shadow-none active:border-[#d9d9d9]'
-                                    : ''
-                            }`}
-                            readOnly={isUser()}
-                        />
+                    <Form.Item name="name" label="Name:" required={!isUser() && true}>
+                        {isUser() ? (
+                            <p className="text-gray-800 font-semibold">{form.getFieldValue('name')}</p>
+                        ) : (
+                            <Input placeholder="Name" />
+                        )}
                     </Form.Item>
 
-                    <Form.Item name="userIds" label="Users in Project">
-                        <Select
-                            mode="multiple"
-                            style={{ width: '100%' }}
-                            placeholder="Search or select users"
-                            options={totalUser}
-                            value={userInProject}
-                            onChange={(value) => setUserInProject(value)}
-                            showSearch
-                            optionFilterProp="label"
-                            onFocus={getTotalUser}
-                            autoClearSearchValue={true}
-                            disabled={isUser()}
-                        />
+                    <Form.Item name="userIds" label="Users in Project:">
+                        {isUser() ? (
+                            <ul>
+                                {userInProject.map((item, index) => {
+                                    return (
+                                        <li className="text-gray-800 font-semibold" key={index}>
+                                            {item.label}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <Select
+                                mode="multiple"
+                                style={{ width: '100%' }}
+                                placeholder="Search or select users"
+                                options={totalUser}
+                                value={userInProject}
+                                onChange={(value) => {
+                                    setUserInProject(value);
+                                }}
+                                showSearch
+                                optionFilterProp="label"
+                                onFocus={getTotalUser}
+                                autoClearSearchValue={true}
+                                disabled={isUser()}
+                            />
+                        )}
                     </Form.Item>
 
-                    <Form.Item name="description" label="Description">
-                        <Input.TextArea
-                            rows={5}
-                            className={`${
-                                isUser()
-                                    ? 'focus:outline-none focus:border-[#d9d9d9] focus:ring-0 hover:border-[#d9d9d9] shadow-none active:shadow-none active:border-[#d9d9d9] '
-                                    : ''
-                            }`}
-                            placeholder="Description"
-                            readOnly={isUser()}
-                        />
+                    <Form.Item name="description" label="Description:">
+                        {!isUser() ? (
+                            <Input.TextArea rows={5} placeholder="Description" />
+                        ) : (
+                            <p className="text-gray-800 font-semibold">{form.getFieldValue('description')}</p>
+                        )}
                     </Form.Item>
                 </Form>
             </Modal>

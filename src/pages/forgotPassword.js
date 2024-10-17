@@ -14,9 +14,9 @@ export default function ForgotPassword() {
         setLoading(true);
         try {
             await forgotPassword(data);
-            message.success('Submit successful!');
+            message.success('Your submission has been completed successfully!');
         } catch (error) {
-            message.error('Fail to submit email');
+            message.error('There was an error submitting the email.');
         } finally {
             setLoading(false);
         }

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getUser, isAuthentication } from '~/hook/useAuth';
 import { UserOutlined } from '@ant-design/icons';
+import { modalSupportContext } from '~/hook/useContext';
 function Header() {
     const navigate = useNavigate();
-
+    const context = useContext(modalSupportContext)
+    
     useEffect(() => {
         if (!isAuthentication()) {
             navigate('/login');
@@ -23,6 +25,7 @@ function Header() {
             <Link to="/" className="w-[80px] h-full flex items-center justify-center hover:bg-cyan-200 text-center">
                 Home
             </Link>
+            <button onClick={context.showModal}>Create Issue</button>
             <div className="flex cursor-pointer group h-full w-[90px] justify-center items-center">
                 <p className="mr-2">{userName}</p>
                 <UserOutlined />

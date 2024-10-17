@@ -3,15 +3,18 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, ExclamationCircleOutlined } 
 import { deleteProject } from '~/services/projectServices';
 import { message, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
 export default function Card({ data, getProjectFunc, onclick }) {
     const navigate = useNavigate();
     const [modal, contextHolder] = Modal.useModal();
+    const [loading, setLoading] = useState(false); // Loading state
 
     const confirmDelete = () => {
         modal.confirm({
             title: 'Confirm Deletion',
             icon: <ExclamationCircleOutlined />,
-            content: 'Are you sure you want to delete this project?',
+            content: 'Do you want to delete this project?',
             okText: 'Yes',
             cancelText: 'No',
             onOk: deleteProjectFunc,
@@ -19,34 +22,37 @@ export default function Card({ data, getProjectFunc, onclick }) {
     };
 
     const deleteProjectFunc = async () => {
+        setLoading(true); 
         try {
             const res = await deleteProject(data.project.id);
-            message.success('delete successful!');
+            message.success('Delete successful!');
             getProjectFunc();
             return res;
         } catch (error) {
-            message.error('failed');
+            message.error('Deletion failed');
             if (error.status === 401) {
                 localStorage.removeItem('accessToken');
                 navigate('/');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="w-[85%]  p-4 bg-white border border-gray-200 rounded-lg shadow line-clamp-6">
-            <div className="flex justify-between h-[40px] border-b-2 items-center">
+        <div className="w-[85%] p-4 bg-white border border-gray-200 rounded-lg shadow line-clamp-6">
+            <div className="flex justify-between h-[40px] border-b-2 items-center overflow-hidden line-clamp-2 ">
                 <p
                     onClick={() => {
                         navigate('/device');
                     }}
-                    className="cursor-pointer"
+                    className="cursor-pointer overflow-hidden w-[100px] "
                 >
                     {data.project.name}
                 </p>
                 {isAdmin() ? (
                     <div className="flex">
-                        <button onClick={confirmDelete}>
+                        <button onClick={confirmDelete} disabled={loading}>
                             <DeleteOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
                         </button>
 
