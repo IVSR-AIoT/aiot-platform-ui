@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Dialog from '~/components/dialog';
 import { getProject } from '~/services/projectServices';
 import Card from '~/components/card';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import CreateSupportModal from '~/components/createSupportModal';
 
 export default function Project() {
     const [totalProjects, setTotalProjects] = useState([]);
-    const navigate = useNavigate
+    const navigate = useNavigate;
     const [selectedProject, setSelectedProject] = useState(null);
     const handleGetProject = (data) => {
         setSelectedProject(data);
@@ -16,7 +17,7 @@ export default function Project() {
         setSelectedProject(null);
     };
 
-    const getProjectFunc = async () => {
+    const getProjectFunc = useCallback(async () => {
         try {
             const res = await getProject();
             setTotalProjects(res.data);
@@ -27,10 +28,10 @@ export default function Project() {
                 navigate('/');
             }
         }
-    };
+    }, [navigate]);
     useEffect(() => {
         getProjectFunc();
-    }, []);
+    }, [getProjectFunc]);
 
     return (
         <div className="h-screen">
@@ -47,6 +48,7 @@ export default function Project() {
                     );
                 })}
             </div>
+            <CreateSupportModal/>
         </div>
     );
 }
