@@ -6,6 +6,7 @@ import { getList, getListByQuery } from '~/services/supportService';
 import { columns as initialColumns } from '~/configs/columnSupport';
 import useDebounce from '~/hook/useDebounce';
 import { formatDate } from '~/configs/utils';
+import CreateSupportModal from '~/components/createSupportModal';
 
 export default function ManageSupport() {
     const [supportRequests, setSupportRequests] = useState([]);
@@ -85,6 +86,7 @@ export default function ManageSupport() {
                 closeDialog={handleCloseDialog}
                 getSupportRequests={getSupportRequests}
             />
+            <CreateSupportModal />
         </div>
     );
 }

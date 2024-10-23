@@ -3,7 +3,7 @@ import { getUser, isAuthentication } from '~/hook/useAuth';
 import { QuestionCircleFilled, UserOutlined } from '@ant-design/icons';
 import { navigation } from '~/configs/headerConfig';
 import { LogoutOutlined } from '@ant-design/icons';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import { modalSupportContext } from '~/hook/useContext';
 
 function Header() {
@@ -12,6 +12,7 @@ function Header() {
     const location = useLocation();
     const userName = getUser()?.name;
     const context = useContext(modalSupportContext);
+    const menuRef = useRef();
 
     const openIssueSupport = () => {
         context.showModal();
@@ -30,6 +31,19 @@ function Header() {
         localStorage.removeItem('accessToken');
         navigate('/login');
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="h-[50px] w-full bg-white flex justify-between items-center px-[30px] fixed top-0 z-50 shadow-sm">
@@ -78,7 +92,10 @@ function Header() {
                     </div>
                 )}
                 {menuIsOpen && (
-                    <ul className="absolute top-[42px] right-0 shadow text-gray-800 rounded-lg z-50 bg-white w-[200px] p-1">
+                    <ul
+                        ref={menuRef}
+                        className="absolute top-[42px] right-0 shadow text-gray-800 rounded-lg z-50 bg-white w-[200px] p-1"
+                    >
                         <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-[#F2F2F2] hover:rounded-lg">
                             <div className="flex justify-center items-center w-7 h-7 rounded-full bg-[#D8DADF] mr-3">
                                 <UserOutlined />
