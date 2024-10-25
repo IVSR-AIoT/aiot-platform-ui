@@ -13,7 +13,7 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+        console.log(loginForm)
         try {
             const res = await checkLogin(loginForm);
             localStorage.setItem('accessToken', res.data.accessToken);

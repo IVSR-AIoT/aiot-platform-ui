@@ -1,19 +1,35 @@
-import { deleteProject, getListProjectService, getUserInProject } from '~/services/projectServices';
+import {
+    deleteProject,
+    getListProjectByQuery,
+    getListProjectService,
+    getUserInProject,
+} from '~/services/projectServices';
 import Search from 'antd/es/transfer/search';
 import { projectColumn } from '~/configs/columnSupport';
 import { Table, Button, message, Modal } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import UpdateInforModal from '~/components/mange-project/updateInforModal';
 import CreateSupportModal from '~/components/manage-support/createSupportModal';
 import { ExclamationCircleOutlined, UserAddOutlined } from '@ant-design/icons';
 import { formatDate } from '~/configs/utils';
+import ShowUsersModal from '~/components/mange-project/ShowUsersModal';
+import useDebounce from '~/hook/useDebounce';
 
 export default function ManageProject() {
-    const [columns, setColumns] = useState([]);
     const [detailProject, setDetailProject] = useState([]);
-    const [usersInProject, setUsersInProject] = useState([]);
+
+    const [userIdsInProject, setUserIdsInProject] = useState([]);
+    const [detailUsersInProject, setDetailUsersInProject] = useState([]);
+
+    const [columns, setColumns] = useState([]);
     const [isOpenModal, setIsModalOpen] = useState(false);
+    const [isOpenUserModal, setIsOpenUserModal] = useState(false);
     const [modal, contextHolder] = Modal.useModal();
+
+    const [query, setQuery] = useState('');
+
+    const debouncedValue = useDebounce(query, 300);
+
     const confirm = (projectId) => {
         modal.confirm({
             title: 'Delete Project',
@@ -25,9 +41,15 @@ export default function ManageProject() {
         });
     };
 
-    const getListProject = async () => {
+    const getListProject = useCallback(async () => {
         try {
-            const res = await getListProjectService();
+            let res;
+            if (debouncedValue.trim() === '') {
+                res = await getListProjectService();
+            } else {
+                res = await getListProjectByQuery(debouncedValue);
+            }
+
             const data = res.map((project, i) => {
                 return {
                     key: i,
@@ -43,7 +65,7 @@ export default function ManageProject() {
         } catch {
             message.error('Failed to fetch the project list. Please try again.');
         }
-    };
+    }, [debouncedValue]);
 
     const handleDeleteProject = async (projectId) => {
         try {
@@ -55,17 +77,25 @@ export default function ManageProject() {
         }
     };
 
-    const handleOpenModal = async (projectId, record) => {
-        const users = await getUserInProject(projectId);
-        const usersId = users.data.map((user) => user.id);
+    const handleAssignUsersToProject = async (projectId) => {
+        try {
+            const res = await getUserInProject(projectId);
 
-        setUsersInProject(usersId);
-        
+            const userIds = res.data.map((user) => user.id);
+            const detailedUsers = res.data.map((user) => ({
+                value: user.id,
+                email: user.email,
+                name: user.name,
+            }));
+
+            setDetailUsersInProject(detailedUsers);
+            setUserIdsInProject(userIds);
+        } catch {}
     };
 
     useEffect(() => {
         getListProject();
-    }, []);
+    }, [getListProject]);
 
     const modifiedProjectColumn = useMemo(() => {
         return [
@@ -74,10 +104,17 @@ export default function ManageProject() {
                 dataIndex: 'user',
                 key: 'user',
                 width: 100,
-                render: () => {
+                render: (_, record) => {
                     return (
                         <div>
-                            <Button type="primary">
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    handleAssignUsersToProject(record.id);
+                                    setIsOpenUserModal(true);
+                                    setDetailProject(record);
+                                }}
+                            >
                                 <UserAddOutlined />
                             </Button>
                         </div>
@@ -97,7 +134,7 @@ export default function ManageProject() {
                             ghost
                             className="mr-2"
                             onClick={() => {
-                                handleOpenModal(record.id, record);
+                                handleAssignUsersToProject(record.id);
                                 setIsModalOpen(true);
                                 setDetailProject(record);
                             }}
@@ -116,7 +153,15 @@ export default function ManageProject() {
     return (
         <div className="h-screen w-full p-5 bg-[#F0F2F5]">
             <div className="w-[20%] mb-5">
-                <Search placeholder="input search loading with enterButton" loading enterButton />
+                <Search
+                    placeholder="input search loading with enterButton"
+                    loading
+                    enterButton
+                    value={query}
+                    onChange={(e) => {
+                        setQuery(e.target.value);
+                    }}
+                />
             </div>
             <Table columns={modifiedProjectColumn} dataSource={columns} />
             <UpdateInforModal
@@ -124,7 +169,16 @@ export default function ManageProject() {
                 getListProject={getListProject}
                 isOpenModal={isOpenModal}
                 detailProject={detailProject}
-                usersInProject={usersInProject}
+                usersInProject={userIdsInProject}
+            />
+            <ShowUsersModal
+                isOpenUserModal={isOpenUserModal}
+                detailProject={detailProject}
+                detailUsersInProject={detailUsersInProject}
+                userIdsInProject={userIdsInProject}
+                setIsOpenUserModal={setIsOpenUserModal}
+                setUserIdsInProject={setUserIdsInProject}
+                setDetailUsersInProject={setDetailUsersInProject}
             />
             <CreateSupportModal />
             {contextHolder}

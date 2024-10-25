@@ -6,7 +6,7 @@ export default function UpdateInforModal({
     isOpenModal,
     setIsModalOpen,
     detailProject,
-    usersInProject,
+    userIdsInProject,
     getListProject,
 }) {
     const [form] = Form.useForm();
@@ -14,7 +14,7 @@ export default function UpdateInforModal({
     const submitForm = async (data) => {
         const form = {
             ...data,
-            usersId: usersInProject,
+            userIds: userIdsInProject,
         };
         try {
             await updateProject(detailProject.id, form);
