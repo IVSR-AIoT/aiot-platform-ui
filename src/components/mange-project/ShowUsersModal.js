@@ -2,6 +2,7 @@ import { Button, Checkbox, List, Modal, message } from 'antd';
 import { useState } from 'react';
 import { updateProject } from '~/services/projectServices';
 import { getListUser } from '~/services/userService';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export default function ShowUsersModal({
     detailUsersInProject,
@@ -15,6 +16,18 @@ export default function ShowUsersModal({
     const [selectedUserIds, setSelectedUserIds] = useState([]);
     const [isAddUserModal, setIsAddUserModal] = useState(true);
     const [userNotInProject, setUserNotInProject] = useState([]);
+    const [modal, contextHolder] = Modal.useModal();
+
+    const confirm = (projectId, userId) => {
+        modal.confirm({
+            title: 'Confirmation',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Are you sure you want to remove this user from the project?',
+            okText: 'Confirm',
+            onOk: () => handleRemoveUserFromProject(projectId, userId),
+            cancelText: 'Cancel',
+        });
+    };
     const handleOk = () => {
         setIsOpenUserModal(false);
         setIsAddUserModal(true);
@@ -115,11 +128,7 @@ export default function ShowUsersModal({
                                     </div>
                                 }
                             />
-                            <Button
-                                danger
-                                ghost
-                                onClick={() => handleRemoveUserFromProject(detailProject.id, item.value)}
-                            >
+                            <Button danger ghost onClick={() => confirm(detailProject.id, item.value)}>
                                 Delete
                             </Button>
                         </List.Item>
@@ -148,6 +157,7 @@ export default function ShowUsersModal({
                     )}
                 />
             )}
+            {contextHolder}
         </Modal>
     );
 }
