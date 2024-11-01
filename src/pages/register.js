@@ -23,12 +23,10 @@ function Register() {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const res = await CreateUser(registerForm);
-            console.log(res);
+            await CreateUser(registerForm);
             message.success('Success');
             navigate('/login');
         } catch (err) {
-            console.log(err);
             message.error(
                 'Registration failed. The email or telephone number is already in use. Please try a different email or telephone number.',
             );
