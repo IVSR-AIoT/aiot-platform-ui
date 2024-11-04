@@ -13,13 +13,12 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log(loginForm)
         try {
             const res = await checkLogin(loginForm);
             localStorage.setItem('accessToken', res.data.accessToken);
             message.success('Successfully logged in');
             navigate('/dashboard');
-        } catch (err) {
+        } catch (err) {          
             message.error('Login attempt failed. Please re-enter your username and password.');
         }
     };

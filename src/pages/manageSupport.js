@@ -70,10 +70,10 @@ export default function ManageSupport() {
         setDetailRequest(null);
     };
     return (
-        <div className="h-auto bg-[#F0F2F5]">
-            <div className="p-3 w-[30%]">
+        <div className="h-screen p-5 bg-[#F0F2F5]">
+            <div className=" w-[30%]">
                 <Search
-                    className="my-[20px]"
+                    className="mb-[20px]"
                     placeholder="Search issue or description"
                     value={query}
                     onChange={(e) => {
