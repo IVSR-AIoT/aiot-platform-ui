@@ -7,7 +7,6 @@ import { io } from 'socket.io-client';
 import { isUser } from '~/hook/useAuth';
 import { formatDate } from '~/configs/utils';
 import UpdateDeviceModal from '~/components/updateDeviceModal';
-import { DatabaseFilled } from '@ant-design/icons';
 
 const columns = [
     {
@@ -44,95 +43,89 @@ const columns = [
 
 const Device = () => {
     const [projectIdInDevice, setProjectIdInDevice] = useState([]);
-    const [device, setDevice] = useState();
+    const [device, setDevice] = useState(null);
     const [dataSource, setDataSource] = useState([]);
     const [openModal, setOpenModal] = useState(false);
 
     const socket = io('ws://localhost:3000/socket');
+
     useEffect(() => {
-        function onConnect() {
-            console.log('connect');
-        }
-
-        function onDisconnect() {}
-
-        function onFooEvent(value) {
-            console.log(value);
-        }
+        const onConnect = () => console.log('Connected to socket');
+        const onDisconnect = () => console.log('Disconnected from socket');
 
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
-        socket.on('test', onFooEvent);
+        socket.on('refreshApi', getListDevices);
 
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
-            socket.off('test', onFooEvent);
-        };
+            socket.off('refreshApi', getListDevices);
+        }; // eslint-disable-next-line
     }, []);
-    const modifiedColumn = useMemo(() => {
-        return [
+
+    const modifiedColumn = useMemo(
+        () => [
             {
                 title: 'Status',
                 dataIndex: 'status',
                 key: 'status',
                 width: 100,
-                render: (_, record) => {
-                    return <Switch checked={record.status} />;
-                },
+                render: (_, record) => <Switch checked={record.status} />,
             },
             ...columns,
             {
                 title: 'Action',
-                render: (record) => {
-                    return (
-                        <div>
-                            <Button
-                                type="primary"
-                                ghost
-                                className="mr-2"
-                                onClick={() => {
-                                    setOpenModal(true);
-                                    setDevice(record);
-                                }}
-                            >
-                                Update
-                            </Button>
-                            <Button danger ghost>
-                                Delete
-                            </Button>
-                        </div>
-                    );
-                },
+                render: (record) => (
+                    <div>
+                        <Button
+                            type="primary"
+                            ghost
+                            className="mr-2"
+                            onClick={() => {
+                                setOpenModal(true);
+                                setDevice(record);
+                            }}
+                        >
+                            Update
+                        </Button>
+                        <Button danger ghost>
+                            Delete
+                        </Button>
+                    </div>
+                ),
             },
-        ];
-    }, []);
+        ],
+        [],
+    );
 
     const getListDevices = async () => {
         try {
             if (isUser()) {
-                message.error('unable to list project!');
-            } else {
-                const res = await deviceListService();
-
-                setProjectIdInDevice(res.data.map((item) => item.projectId));
-                setDataSource(
-                    res.data.map((device, i) => ({
-                        key: i,
-                        id: device.id,
-                        status: device.isActive,
-                        name: device.name ? device.name : device.mac_address,
-                        createdAt: formatDate(device.createdAt),
-                        updatedAt: formatDate(device.updatedAt),
-                        projectId: device.projectId ? device.projectId : '',
-                        deviceId: device.deviceId,
-                    })),
-                );
+                message.error('Unable to list devices!');
+                return;
             }
+            const res = await deviceListService();
+            const deviceData = res.data;
+
+            setProjectIdInDevice(deviceData.map((item) => item.projectId));
+            setDataSource(
+                deviceData.map((device, index) => ({
+                    key: index,
+                    id: device.id,
+                    status: device.isActive,
+                    name: device.name || device.mac_address,
+                    createdAt: formatDate(device.createdAt),
+                    updatedAt: formatDate(device.updatedAt),
+                    projectId: device.projectId || '',
+                    deviceId: device.deviceId,
+                })),
+            );
         } catch (error) {
             console.error('Failed to fetch device list:', error);
         }
     };
+
     useEffect(() => {
         getListDevices();
     }, []);

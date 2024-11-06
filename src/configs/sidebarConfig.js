@@ -29,6 +29,7 @@ export const listItems = [
                 icon: <PhoneOutlined />,
                 label: 'Device',
                 route: '/device',
+                roleid: 2,
             },
         ],
     },

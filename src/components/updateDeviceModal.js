@@ -2,11 +2,15 @@ import { Form, Input, message, Modal, Select } from 'antd';
 import { getListProjectService } from '~/services/projectServices';
 import { useEffect, useState } from 'react';
 import { updateDeviceService } from '~/services/deviceService';
+import { isUser } from '~/hook/useAuth';
 
 export default function UpdateDeviceModal({ openModal, setOpenModal, device, getListDevices, projectIdInDevice }) {
     const [form] = Form.useForm();
     const [selectOptions, setSelectOptions] = useState([]);
     const listProjects = async () => {
+        if (isUser()) {
+            return;
+        }
         try {
             const res = await getListProjectService();
             setSelectOptions(res.map((project) => ({ label: project.name, value: project.id })));
