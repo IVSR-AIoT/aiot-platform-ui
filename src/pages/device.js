@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import CreateSupportModal from '~/components/manage-support/createSupportModal';
 import { deviceListService } from '~/services/deviceService';
 
@@ -56,7 +57,7 @@ const Device = () => {
             console.log('refreshApi');
             getListDevices();
         });
-        return () => socket.off('refreshApi');
+        return () => socket.off('refreshApi');// eslint-disable-next-line
     }, []);
     const modifiedColumn = useMemo(
         () => [
@@ -87,6 +88,7 @@ const Device = () => {
                 ),
             },
         ],
+        
         [],
     );
 
@@ -122,9 +124,23 @@ const Device = () => {
     }, []);
 
     return (
-        <div className="h-screen">
-            <h1> this is device</h1>
-            <CreateSupportModal/>
+        <div className="h-screen p-5 bg-[#F0F2F5]">
+            <CreateSupportModal />
+            <Table
+                columns={modifiedColumn}
+                dataSource={dataSource}
+                pagination
+                rowClassName={(record) =>
+                    record.status ? '' : 'bg-[#aaa] text-gray-500 pointer-events-none opacity-60'
+                }
+            />
+            <UpdateDeviceModal
+                openModal={openModal}
+                device={device}
+                projectIdInDevice={projectIdInDevice}
+                setOpenModal={setOpenModal}
+                getListDevices={getListDevices}
+            />
         </div>
     );
 };
