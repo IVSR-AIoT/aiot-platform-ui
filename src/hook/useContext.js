@@ -17,7 +17,7 @@ const ModalSupportProvider = ({ children }) => {
 
 const SocketContext = createContext();
 const SocketProvider = ({ children }) => {
-    const socket = io(process.env.REACT_APP_WEBSOCKET_URL);
+    const socket = io(`${process.env.REACT_APP_BASE_URL}/socket`);
     useEffect(() => {
         const onConnect = () => console.log('Connected to socket');
         socket.on('connect', onConnect);
