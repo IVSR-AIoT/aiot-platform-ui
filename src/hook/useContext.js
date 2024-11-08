@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { useState, createContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 const modalSupportContext = createContext();
@@ -18,8 +18,11 @@ const ModalSupportProvider = ({ children }) => {
 const SocketContext = createContext();
 const SocketProvider = ({ children }) => {
     const socket = io(process.env.REACT_APP_WEBSOCKET_URL);
-    const onConnect = () => console.log('Connected to socket');
-    socket.on('connect', onConnect);
+    useEffect(() => {
+        const onConnect = () => console.log('Connected to socket');
+        socket.on('connect', onConnect);
+        return () => socket.off('connect');
+    });
     const value = { socket };
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 };
