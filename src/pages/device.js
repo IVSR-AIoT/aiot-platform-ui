@@ -56,7 +56,7 @@ const Device = () => {
             console.log('refreshApi');
             getListDevices();
         });
-        return () => socket.off('refreshApi');
+        return () => socket.off('refreshApi');// eslint-disable-next-line
     }, []);
     const modifiedColumn = useMemo(
         () => [
@@ -87,6 +87,7 @@ const Device = () => {
                 ),
             },
         ],
+        
         [],
     );
 
