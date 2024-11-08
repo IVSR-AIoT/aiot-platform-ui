@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext } from 'react';
 import CreateSupportModal from '~/components/manage-support/createSupportModal';
 import { deviceListService } from '~/services/deviceService';
 
 import { Button, message, Switch, Table } from 'antd';
-import { io } from 'socket.io-client';
 import { isUser } from '~/hook/useAuth';
 import { formatDate } from '~/configs/utils';
 import UpdateDeviceModal from '~/components/updateDeviceModal';
+import { SocketContext } from '~/hook/useContext';
 
 const columns = [
     {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        width: 160,
+        width: 180,
     },
     {
         title: 'Device ID',
@@ -24,6 +24,7 @@ const columns = [
         title: 'Project ID',
         dataIndex: 'projectId',
         key: 'projectId',
+        width: 100,
     },
     {
         title: 'Date Created',
@@ -47,23 +48,16 @@ const Device = () => {
     const [dataSource, setDataSource] = useState([]);
     const [openModal, setOpenModal] = useState(false);
 
-    const socket = io('ws://localhost:3000/socket');
+    const context = useContext(SocketContext);
+    const socket = context.socket;
 
     useEffect(() => {
-        const onConnect = () => console.log('Connected to socket');
-        const onDisconnect = () => console.log('Disconnected from socket');
-
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        socket.on('refreshApi', getListDevices);
-
-        return () => {
-            socket.off('connect', onConnect);
-            socket.off('disconnect', onDisconnect);
-            socket.off('refreshApi', getListDevices);
-        }; // eslint-disable-next-line
+        socket.on('refreshApi', () => {
+            console.log('refreshApi');
+            getListDevices();
+        });
+        return () => socket.off('refreshApi');
     }, []);
-
     const modifiedColumn = useMemo(
         () => [
             {
@@ -76,23 +70,20 @@ const Device = () => {
             ...columns,
             {
                 title: 'Action',
+                width: 110,
+                key: 'action',
                 render: (record) => (
-                    <div>
-                        <Button
-                            type="primary"
-                            ghost
-                            className="mr-2"
-                            onClick={() => {
-                                setOpenModal(true);
-                                setDevice(record);
-                            }}
-                        >
-                            Update
-                        </Button>
-                        <Button danger ghost>
-                            Delete
-                        </Button>
-                    </div>
+                    <Button
+                        type="primary"
+                        ghost
+                        className="mr-2"
+                        onClick={() => {
+                            setOpenModal(true);
+                            setDevice(record);
+                        }}
+                    >
+                        Update
+                    </Button>
                 ),
             },
         ],
