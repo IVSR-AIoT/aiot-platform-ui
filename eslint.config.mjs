@@ -7,7 +7,11 @@ export default [
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],
     languageOptions: {
-      globals: globals.browser
+      globals: {
+        ...globals.browser,
+        ...globals.es2024,
+        ...globals.node
+      }
     },
     rules: {
       'react/react-in-jsx-scope': 'off'
