@@ -24,7 +24,7 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
       setIsModalOpen(false)
       closeDialog()
       getSupportRequests()
-    } catch (error) {
+    } catch{
       message.error('Error occurred while sending the reply.')
     } finally {
       setLoading(false)
