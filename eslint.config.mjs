@@ -7,10 +7,18 @@ export default [
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],
     languageOptions: {
-      globals: globals.browser
+      globals: {
+        ...globals.node,
+        ...globals.browser
+      }
     },
     rules: {
       'react/react-in-jsx-scope': 'off'
+    },
+    settings: {
+      react: {
+        version: 'detect'
+      }
     }
   },
   pluginJs.configs.recommended,

@@ -1,6 +1,7 @@
 import { Form, Modal, Input, message } from 'antd'
 import { useEffect } from 'react'
 import { updateProject } from '~/services/projectServices'
+import PropTypes from 'prop-types'
 
 export default function UpdateInforModal({
   isOpenModal,
@@ -81,4 +82,12 @@ export default function UpdateInforModal({
       </Form>
     </Modal>
   )
+}
+
+UpdateInforModal.propTypes = {
+  isOpenModal: PropTypes.bool,
+  setIsModalOpen: PropTypes.func,
+  detailProject: PropTypes.object,
+  userIdsInProject: PropTypes.array,
+  getListProject: PropTypes.func
 }

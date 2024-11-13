@@ -5,6 +5,7 @@ import Header from '~/components/header'
 import Footer from '~/components/footer'
 import Sidebar from '~/components/sidebar'
 import { message } from 'antd'
+import PropTypes from 'prop-types'
 
 export default function PrivateRoute({ children }) {
   const navigate = useNavigate()
@@ -38,4 +39,7 @@ export default function PrivateRoute({ children }) {
       </div>
     </div>
   )
+}
+PrivateRoute.propTypes = {
+  children: PropTypes.node.isRequired
 }

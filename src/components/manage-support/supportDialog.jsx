@@ -2,7 +2,7 @@ import { Form, message, Modal, Radio, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useEffect, useState } from 'react'
 import { replyService } from '~/services/supportService'
-
+import PropTypes from 'prop-types'
 export default function SupportDialog({ detailRequest, closeDialog, getSupportRequests }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -24,7 +24,7 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
       setIsModalOpen(false)
       closeDialog()
       getSupportRequests()
-    } catch{
+    } catch {
       message.error('Error occurred while sending the reply.')
     } finally {
       setLoading(false)
@@ -109,4 +109,10 @@ export default function SupportDialog({ detailRequest, closeDialog, getSupportRe
       </Modal>
     </div>
   )
+}
+
+SupportDialog.propTypes = {
+  detailRequest: PropTypes.object.isRequired,
+  closeDialog: PropTypes.func.isRequired,
+  getSupportRequests: PropTypes.func
 }

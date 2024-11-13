@@ -26,7 +26,7 @@ function Register() {
       await CreateUser(registerForm)
       message.success('Success')
       navigate('/login')
-    } catch (err) {
+    } catch {
       message.error(
         'Registration failed. The email or telephone number is already in use. Please try a different email or telephone number.'
       )

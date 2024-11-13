@@ -7,7 +7,7 @@ import { isUser } from '~/hook/useAuth'
 import { formatDate } from '~/configs/utils'
 import UpdateDeviceModal from '~/components/updateDeviceModal'
 import { SocketContext } from '~/hook/useContext'
-import Map from '~/components/map'
+
 
 const columns = [
   {

@@ -90,7 +90,9 @@ export default function ManageProject() {
 
       setDetailUsersInProject(detailedUsers)
       setUserIdsInProject(userIds)
-    } catch {}
+    } catch {
+      message.error("error")
+    }
   }
 
   useEffect(() => {

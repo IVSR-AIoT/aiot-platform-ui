@@ -3,14 +3,9 @@ import { getListProjectService } from '~/services/projectServices'
 import { useEffect, useState } from 'react'
 import { updateDeviceService } from '~/services/deviceService'
 import { isUser } from '~/hook/useAuth'
+import PropTypes from 'prop-types'
 
-export default function UpdateDeviceModal({
-  openModal,
-  setOpenModal,
-  device,
-  getListDevices,
-  projectIdInDevice
-}) {
+export default function UpdateDeviceModal({ openModal, setOpenModal, device, getListDevices }) {
   const [form] = Form.useForm()
   const [selectOptions, setSelectOptions] = useState([])
   const listProjects = async () => {
@@ -86,4 +81,10 @@ export default function UpdateDeviceModal({
       </Form>
     </Modal>
   )
+}
+UpdateDeviceModal.propTypes = {
+  openModal: PropTypes.bool,
+  setOpenModal: PropTypes.func,
+  device: PropTypes.object,
+  getListDevices: PropTypes.func
 }

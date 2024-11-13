@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { Button, Form, Input, message, Modal, Select } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -185,3 +186,9 @@ function Dialog({ getProjectFunc, data, onclose }) {
 }
 
 export default Dialog
+
+Dialog.propTypes = {
+  getProjectFunc: PropTypes.func,
+  data: PropTypes.object,
+  onclose: PropTypes.func
+}
