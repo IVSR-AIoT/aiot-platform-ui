@@ -1,6 +1,6 @@
 import apiInstances from './api'
 
-export const getMessageService = async (messageType, deviceId, start, end, query) => {
+export const getMessageService = async (messageType, deviceId, start, end, query, pagnition) => {
   let url = `/${messageType}?device_id=${deviceId}`
   if (start) {
     url += `&start=${start}`
@@ -10,6 +10,9 @@ export const getMessageService = async (messageType, deviceId, start, end, query
   }
   if (query) {
     url += `&q=${query}`
+  }
+  if (pagnition) {
+    url += `&page=${pagnition}`
   }
   const response = await apiInstances.get(url)
   return response

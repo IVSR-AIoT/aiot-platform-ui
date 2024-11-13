@@ -91,7 +91,7 @@ export default function ManageProject() {
       setDetailUsersInProject(detailedUsers)
       setUserIdsInProject(userIds)
     } catch {
-      message.error("error")
+      message.error('error')
     }
   }
 

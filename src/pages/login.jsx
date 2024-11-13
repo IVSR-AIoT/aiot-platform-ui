@@ -19,7 +19,7 @@ function Login() {
       localStorage.setItem('accessToken', res.data.accessToken)
       message.success('Successfully logged in')
       navigate('/dashboard')
-    } catch  {
+    } catch {
       message.error('Login attempt failed. Please re-enter your username and password.')
     }
   }

@@ -1,101 +1,90 @@
-import {  List, Modal } from 'antd'
+import { List, Modal, Typography, Image } from 'antd'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 
+const { Text } = Typography
+
+function LabelValue({ label, value }) {
+  return (
+    <List.Item>
+      <Text strong>{label}:</Text> {value}
+    </List.Item>
+  )
+}
+
 export default function ModalListObject({ detailMessage, openModal, setOpenModal }) {
-  const [dataSource, setDataSource] = useState()
+  const [dataSource, setDataSource] = useState([])
+
   const handleAssignEventToObject = () => {
-    let event
-    const finalData = detailMessage.object_list.map((item) => {
-      event = detailMessage.event_list.filter((data) => data.object_id === item.id)
-      return { ...item, event: event[0] }
+    const finalData = detailMessage?.object_list.map((item) => {
+      const event = detailMessage.event_list.find((data) => data.object_id === item.id)
+      return { ...item, event: event || null }
     })
     setDataSource(finalData)
   }
+
   useEffect(() => {
-    if (detailMessage) {
-      handleAssignEventToObject()
-    }
+    if (detailMessage) handleAssignEventToObject()
   }, [detailMessage])
 
-  const handleOk = () => {
-    setOpenModal(false)
-  }
-  const handleCancel = () => {
-    setOpenModal(false)
-  }
+  const handleOk = () => setOpenModal(false)
+  const handleCancel = () => setOpenModal(false)
+
   return (
     <Modal
       width={700}
       open={openModal}
       onOk={handleOk}
       onCancel={handleCancel}
-      title={<p className=" text-[24px]">Detail Message</p>}
+      title={<Text className="text-[24px]">{detailMessage?.message_id}</Text>}
     >
       <List
         grid={{ gutter: 16, column: 3 }}
         dataSource={dataSource}
-        renderItem={(item) => {
-          return (
-            <div key={item.id} className="m-2">
-              <List.Item>
-                <label>Type:</label> {item.object.type}
-              </List.Item>
+        renderItem={(item) => (
+          <div key={item.id} className="m-2">
+            <List.Item>
+              <Image href={item.image_URL} alt="object-image" />
+            </List.Item>
+            <LabelValue label="Type" value={item.object.type} />
 
-              {item.object.type === 'human' ? (
-                <div>
-                  <List.Item>
-                    <label>Age:</label> {item.object.age}
-                  </List.Item>
-                  {item.event ? (
-                    <List.Item>
-                      <label>Gender:</label> {item.object.gender}
-                    </List.Item>
-                  ) : null}
-                </div>
-              ) : (
-                <div>
-                  <List.Item>
-                    <label>Brand:</label> {item.object.brand}
-                  </List.Item>
-                  <List.Item>
-                    <label>Color:</label> {item.object.color}
-                  </List.Item>
-                  <List.Item>
-                    <label>Licence:</label> {item.object.licence}
-                  </List.Item>
-                  <List.Item>
-                    <label>Category:</label> {item.object.category}
-                  </List.Item>
-                </div>
-              )}
-              {item.event ? (
-                <List.Item>
-                  <label>Action:</label> {item.event.action}
-                </List.Item>
-              ) : null}
-              <List.Item>
-                <label>Top Left X:</label> {item.bbox.topleftx}
-              </List.Item>
-              <List.Item>
-                <label>Top Left y:</label> {item.bbox.toplefty}
-              </List.Item>
-              <List.Item>
-                <label>Bottom Right X:</label> {item.bbox.bottomrightx}
-              </List.Item>
-              <List.Item>
-                <label>Bottom Right Y:</label> {item.bbox.bottomrighty}
-              </List.Item>
-            </div>
-          )
-        }}
+            {item.object.type === 'human' ? (
+              <>
+                <LabelValue label="Age" value={item.object.age} />
+                {item.event && <LabelValue label="Gender" value={item.object.gender} />}
+              </>
+            ) : (
+              <>
+                <LabelValue label="Brand" value={item.object.brand} />
+                <LabelValue label="Color" value={item.object.color} />
+                <LabelValue label="Licence" value={item.object.licence} />
+                <LabelValue label="Category" value={item.object.category} />
+              </>
+            )}
+
+            {item.event && <LabelValue label="Action" value={item.event.action} />}
+            <LabelValue label="Top Left X" value={item.bbox.topleftx} />
+            <LabelValue label="Top Left Y" value={item.bbox.toplefty} />
+            <LabelValue label="Bottom Right X" value={item.bbox.bottomrightx} />
+            <LabelValue label="Bottom Right Y" value={item.bbox.bottomrighty} />
+          </div>
+        )}
       />
     </Modal>
   )
 }
 
 ModalListObject.propTypes = {
-  detailMessage: PropTypes.object,
+  detailMessage: PropTypes.shape({
+    message_id: PropTypes.string,
+    object_list: PropTypes.arrayOf(PropTypes.object),
+    event_list: PropTypes.arrayOf(PropTypes.object)
+  }),
   openModal: PropTypes.bool.isRequired,
   setOpenModal: PropTypes.func.isRequired
+}
+
+LabelValue.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 }
