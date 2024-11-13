@@ -60,8 +60,8 @@
   },
   "lint-staged": {
     "*.js": [
-      "npm run format",
-      "npm run lint"
+      "npm run lint",
+      "npm run format"
     ]
   }
 }
