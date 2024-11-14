@@ -1,4 +1,4 @@
-import { List, Modal, Typography, Image } from 'antd'
+import { Modal, Typography, Card } from 'antd'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 
@@ -6,9 +6,9 @@ const { Text } = Typography
 
 function LabelValue({ label, value }) {
   return (
-    <List.Item>
+    <p>
       <Text strong>{label}:</Text> {value}
-    </List.Item>
+    </p>
   )
 }
 
@@ -32,44 +32,40 @@ export default function ModalListObject({ detailMessage, openModal, setOpenModal
 
   return (
     <Modal
-      width={700}
+      width={800}
       open={openModal}
       onOk={handleOk}
       onCancel={handleCancel}
       title={<Text className="text-[24px]">{detailMessage?.message_id}</Text>}
     >
-      <List
-        grid={{ gutter: 16, column: 3 }}
-        dataSource={dataSource}
-        renderItem={(item) => (
-          <div key={item.id} className="m-2">
-            <List.Item>
-              <Image href={item.image_URL} alt="object-image" />
-            </List.Item>
-            <LabelValue label="Type" value={item.object.type} />
+      <div className="grid grid-cols-3 gap-4">
+        {dataSource.map((item, index) => {
+          return (
+            <Card key={index} cover={<img alt="object_image" src={item.image_URL} />}>
+              <LabelValue label="Type" value={item.object.type} />
+              {item.object.type === 'human' ? (
+                <>
+                  <LabelValue label="Age" value={item.object.age} />
+                  {item.event && <LabelValue label="Gender" value={item.object.gender} />}
+                </>
+              ) : (
+                <>
+                  <LabelValue label="Brand" value={item.object.brand} />
+                  <LabelValue label="Color" value={item.object.color} />
+                  <LabelValue label="Licence" value={item.object.licence} />
+                  <LabelValue label="Category" value={item.object.category} />
+                </>
+              )}
 
-            {item.object.type === 'human' ? (
-              <>
-                <LabelValue label="Age" value={item.object.age} />
-                {item.event && <LabelValue label="Gender" value={item.object.gender} />}
-              </>
-            ) : (
-              <>
-                <LabelValue label="Brand" value={item.object.brand} />
-                <LabelValue label="Color" value={item.object.color} />
-                <LabelValue label="Licence" value={item.object.licence} />
-                <LabelValue label="Category" value={item.object.category} />
-              </>
-            )}
-
-            {item.event && <LabelValue label="Action" value={item.event.action} />}
-            <LabelValue label="Top Left X" value={item.bbox.topleftx} />
-            <LabelValue label="Top Left Y" value={item.bbox.toplefty} />
-            <LabelValue label="Bottom Right X" value={item.bbox.bottomrightx} />
-            <LabelValue label="Bottom Right Y" value={item.bbox.bottomrighty} />
-          </div>
-        )}
-      />
+              {item.event && <LabelValue label="Action" value={item.event.action} />}
+              <LabelValue label="Top Left X" value={item.bbox.topleftx} />
+              <LabelValue label="Top Left Y" value={item.bbox.toplefty} />
+              <LabelValue label="Bottom Right X" value={item.bbox.bottomrightx} />
+              <LabelValue label="Bottom Right Y" value={item.bbox.bottomrighty} />
+            </Card>
+          )
+        })}
+      </div>
     </Modal>
   )
 }

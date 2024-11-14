@@ -1,6 +1,7 @@
 import { Button, List } from 'antd'
 import PropTypes from 'prop-types'
 import { formatDate } from '~/configs/utils'
+import Map from '../map'
 
 export default function MessageList({ data, setOpenModal, setDetailMessage }) {
   return (
@@ -31,6 +32,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage }) {
                   Accept
                 </Button>
               ]}
+              extra={<Map />}
             >
               <List.Item.Meta
                 title={<h1 className="font-bold text-[20px]">{item.message_id}</h1>}
@@ -43,11 +45,6 @@ export default function MessageList({ data, setOpenModal, setDetailMessage }) {
                 <p>
                   <label className="font-semibold w-[80px]">Camera:</label> {item.specs.camera.id} -{' '}
                   {item.specs.camera.type}
-                </p>
-
-                <p>
-                  <label className="font-semibold w-[80px]">Location:</label> {item.location.id} -{' '}
-                  {item.location.description}
                 </p>
                 <p>
                   <label className="font-semibold w-[80px]">Device:</label> {item.device.id} -{' '}
