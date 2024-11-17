@@ -10,6 +10,7 @@ import { List, message, Modal, Col } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { listDeviceByProjectIdService } from '~/services/deviceService'
+import PropTypes from 'prop-types'
 
 export default function Card({ data, getProjectFunc, onclick }) {
   const navigate = useNavigate()
@@ -21,7 +22,9 @@ export default function Card({ data, getProjectFunc, onclick }) {
     try {
       const res = await listDeviceByProjectIdService(data.project.id)
       setList(res.data)
-    } catch {}
+    } catch {
+      message.error('error')
+    }
   }
 
   const confirmDelete = () => {
@@ -131,4 +134,10 @@ export default function Card({ data, getProjectFunc, onclick }) {
       {contextHolder}
     </div>
   )
+}
+
+Card.propTypes = {
+  data: PropTypes.object,
+  getProjectFunc: PropTypes.func,
+  onclick: PropTypes.func
 }

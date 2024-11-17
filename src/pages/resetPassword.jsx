@@ -60,7 +60,7 @@ export default function ResetPassword() {
         localStorage.removeItem('accessToken')
         navigate('/login')
         message.success('Password changed successfully')
-      } catch (error) {
+      } catch {
         message.error('Failed to change password')
       }
     }

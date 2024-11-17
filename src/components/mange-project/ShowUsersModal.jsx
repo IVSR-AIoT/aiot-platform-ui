@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { updateProject } from '~/services/projectServices'
 import { getListUser } from '~/services/userService'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-
+import PropTypes from 'prop-types'
 export default function ShowUsersModal({
   detailUsersInProject,
   userIdsInProject,
@@ -48,7 +48,7 @@ export default function ShowUsersModal({
       await updateProject(projectId, updatedProjectData)
       message.success('Users added to the project successfully!')
       setSelectedUserIds([])
-    } catch (error) {
+    } catch {
       message.error('Failed to add users to the project. Please try again.')
     }
   }
@@ -76,7 +76,9 @@ export default function ShowUsersModal({
         .filter((item) => !userIdsInProject.includes(item.id))
         .map((user) => ({ value: user.id, email: user.email, name: user.name }))
       setUserNotInProject(data)
-    } catch {}
+    } catch {
+      message.error('error')
+    }
   }
 
   const handleRemoveUserFromProject = async (projectId, userId) => {
@@ -160,4 +162,13 @@ export default function ShowUsersModal({
       {contextHolder}
     </Modal>
   )
+}
+ShowUsersModal.propTypes = {
+  detailUsersInProject: PropTypes.object,
+  userIdsInProject: PropTypes.array,
+  isOpenUserModal: PropTypes.bool,
+  setIsOpenUserModal: PropTypes.func,
+  setUserIdsInProject: PropTypes.func,
+  detailProject: PropTypes.object,
+  setDetailUsersInProject: PropTypes.func
 }

@@ -1,4 +1,5 @@
 import { useState, createContext, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { io } from 'socket.io-client'
 
 const modalSupportContext = createContext()
@@ -25,5 +26,13 @@ const SocketProvider = ({ children }) => {
   })
   const value = { socket }
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
+}
+
+ModalSupportProvider.propTypes = {
+  children: PropTypes.node.isRequired
+}
+
+SocketProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }
 export { modalSupportContext, ModalSupportProvider, SocketContext, SocketProvider }

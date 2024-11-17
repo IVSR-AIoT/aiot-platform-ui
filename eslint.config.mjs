@@ -11,10 +11,16 @@ export default [
         ...globals.browser,
         ...globals.es2024,
         ...globals.node
+
       }
     },
     rules: {
       'react/react-in-jsx-scope': 'off'
+    },
+    settings: {
+      react: {
+        version: 'detect'
+      }
     }
   },
   pluginJs.configs.recommended,

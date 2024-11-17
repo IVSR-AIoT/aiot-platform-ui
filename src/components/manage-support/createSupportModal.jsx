@@ -15,7 +15,7 @@ export default function CreateSupportModal() {
     try {
       await CreateIssueService(value)
       message.success('successful!')
-    } catch (error) {
+    } catch {
       message.error('error')
     }
   }

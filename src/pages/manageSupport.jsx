@@ -1,4 +1,4 @@
-import { Table } from 'antd'
+import { message, Table } from 'antd'
 import Search from 'antd/es/input/Search'
 import React, { useCallback, useEffect, useState } from 'react'
 import SupportDialog from '~/components/manage-support/supportDialog'
@@ -55,14 +55,16 @@ export default function ManageSupport() {
         }
       })
       setSupportRequests(data)
-    } catch (error) {}
+    } catch {
+      message.error('error')
+    }
   }, [debouncedValue])
 
   useEffect(() => {
     getSupportRequests()
   }, [getSupportRequests])
 
-  const handleRowClick = (record, rowIndex) => {
+  const handleRowClick = (record) => {
     setDetailRequest(record)
   }
 
