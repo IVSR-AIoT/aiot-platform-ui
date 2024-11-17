@@ -11,7 +11,6 @@ export default [
         ...globals.browser,
         ...globals.es2024,
         ...globals.node
-
       }
     },
     rules: {
@@ -30,5 +29,8 @@ export default [
       ...pluginReact.configs.flat.recommended.rules,
       'react/react-in-jsx-scope': 'off'
     }
+  },
+  {
+    ignores: ['build/']
   }
 ]

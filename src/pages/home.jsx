@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import CreateSupportModal from '~/components/manage-support/createSupportModal'
 import Header from '~/components/header'
 
-
 function Home() {
   return (
     <div className="h-screen bg-[#F0F2F5]">
@@ -16,6 +15,5 @@ function Home() {
     </div>
   )
 }
-
 
 export default Home
