@@ -17,3 +17,8 @@ export const getMessageService = async (messageType, deviceId, start, end, query
   const response = await apiInstances.get(url)
   return response
 }
+
+export const getDetailMessageService = async (messageType, body) => {
+  const response = await apiInstances.get(`/${messageType}/detail`, body)
+  return response
+}

@@ -1,5 +1,5 @@
 import { RoutesConfig } from '~/configs/routesConfig'
-import Dashboard from '~/pages/dashboard'
+import Alert from './pages/alert'
 import Device from '~/pages/device'
 import Home from '~/pages/home'
 import Login from '~/pages/login'
@@ -21,7 +21,7 @@ const publicRoutes = [
 const privateRoutes = [
   { path: RoutesConfig.project, component: Project },
   { path: RoutesConfig.device, component: Device },
-  { path: RoutesConfig.dashboard, component: Dashboard },
+  { path: RoutesConfig.alert, component: Alert },
   { path: RoutesConfig.manageSupport, component: ManageSupport },
   { path: RoutesConfig.manageProject, component: ManageProject }
 ]

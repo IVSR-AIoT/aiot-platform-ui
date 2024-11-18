@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { formatDate } from '~/configs/utils'
 import Map from '../map'
 
-export default function MessageList({ data, setOpenModal, setDetailMessage }) {
+export default function MessageList({ data, setOpenModal, setDetailMessage, messageType }) {
   return (
     <div className="min-h-[100vh]">
       <List
@@ -13,7 +13,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage }) {
         renderItem={(item) => {
           return (
             <List.Item
-              key={item.message_id}
+              key={item?.message_id}
               actions={[
                 <Button
                   type="primary"
@@ -26,29 +26,31 @@ export default function MessageList({ data, setOpenModal, setDetailMessage }) {
                   Watch Video
                 </Button>,
                 <Button danger key="reject">
-                  Reject
+                  Dismiss
                 </Button>,
                 <Button type="primary" ghost key="accept">
-                  Accept
+                  Acknowledge
                 </Button>
               ]}
               extra={<Map />}
             >
               <List.Item.Meta
-                title={<h1 className="font-bold text-[20px]">{item.message_id}</h1>}
-                description={item.specs.description}
+                title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
+                description={messageType === 'object' ? item?.specs?.description : item?.payload}
               />
-              <div>
+              <div className="grid grid-cols-4 place-items-center place-content-center ml-[-10px]">
                 <p>
-                  <label className="font-semibold">Timestamp:</label> {formatDate(item.timestamp)}
+                  <label className="font-semibold">Timestamp:</label> {formatDate(item?.timestamp)}
                 </p>
+                {messageType === 'object' ? (
+                  <p>
+                    <label className="font-semibold w-[80px]">Camera:</label>{' '}
+                    {item?.specs?.camera.id} - {item?.specs?.camera?.type}
+                  </p>
+                ) : null}
                 <p>
-                  <label className="font-semibold w-[80px]">Camera:</label> {item.specs.camera.id} -{' '}
-                  {item.specs.camera.type}
-                </p>
-                <p>
-                  <label className="font-semibold w-[80px]">Device:</label> {item.device.id} -{' '}
-                  {item.device.mac_address}
+                  <label className="font-semibold w-[80px]">Device:</label> {item?.device.id} -{' '}
+                  {item?.device?.mac_address}
                 </p>
               </div>
             </List.Item>
@@ -62,5 +64,6 @@ export default function MessageList({ data, setOpenModal, setDetailMessage }) {
 MessageList.propTypes = {
   data: PropTypes.array.isRequired,
   setOpenModal: PropTypes.func.isRequired,
-  setDetailMessage: PropTypes.func.isRequired
+  setDetailMessage: PropTypes.func.isRequired,
+  messageType: PropTypes.string
 }

@@ -15,8 +15,8 @@ export const listItems = [
       {
         key: '1',
         icon: <SignalFilled />,
-        label: 'Dashboard',
-        route: '/dashboard'
+        label: 'Alert',
+        route: '/alert'
       },
       {
         key: '2',
