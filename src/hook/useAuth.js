@@ -7,9 +7,13 @@ export const getUser = () => {
   if (!token) {
     return null
   }
-  const payload = JSON.parse(atob(token.split('.')[1]))
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
 
-  return payload
+    return payload
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export const isAdmin = () => {
