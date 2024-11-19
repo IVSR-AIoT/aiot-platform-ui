@@ -5,16 +5,20 @@ import { isUser } from '~/hook/useAuth'
 import { getListProjectService } from '~/services/projectServices'
 import { listDeviceByProjectIdService } from '~/services/deviceService'
 import { getMessageService } from '~/services/messageService'
+import { messageConfigs } from '~/configs/alert'
 
-const messageType = ['object', 'sensor', 'notification']
-
-export default function FilterMenu({ setData, setTotalPage, pagination }) {
+export default function FilterMenu({
+  setData,
+  setTotalPage,
+  pagination,
+  setMessageType,
+  messageType
+}) {
   const { RangePicker } = DatePicker
   const [projectOptions, setProjectOptions] = useState([])
   const [deviceOptions, setDeviceOptions] = useState([])
   const [selectedDevice, setSelectedDevice] = useState()
   const [selectedProject, setSelectedProject] = useState()
-  const [selectMessageType, setSelectedMessageType] = useState(messageType[0])
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null
@@ -44,14 +48,14 @@ export default function FilterMenu({ setData, setTotalPage, pagination }) {
   }
 
   const getMessage = async () => {
-    if (!selectedProject || !selectedDevice || !selectMessageType) {
+    if (!selectedProject || !selectedDevice || !messageType) {
       message.warning('Please select a project, device, and message type.')
       return
     }
 
     try {
       const res = await getMessageService(
-        selectMessageType,
+        messageType,
         selectedDevice,
         dateRange.startDate,
         dateRange.endDate,
@@ -91,11 +95,10 @@ export default function FilterMenu({ setData, setTotalPage, pagination }) {
     } else {
       setData([])
     }
-  }, [selectedProject, selectedDevice, selectMessageType, dateRange, query, pagination])
+  }, [selectedProject, selectedDevice, messageType, dateRange, query, pagination])
 
   return (
-    <div className="grid grid-cols-5 gap-4 place-content-center place-items-center mb-[20px]">
-      <Segmented options={messageType} onChange={(value) => setSelectedMessageType(value)} />
+    <div className="grid grid-cols-4 gap-4 place-content-center">
       <Select
         options={projectOptions}
         className="w-[200px]"
@@ -117,7 +120,7 @@ export default function FilterMenu({ setData, setTotalPage, pagination }) {
         value={selectedDevice}
       />
       <RangePicker
-        style={{ width: 250 }}
+        style={{ width: 220 }}
         onChange={(_, value) => setDateRange({ startDate: value[0], endDate: value[1] })}
       />
       <Input
@@ -126,6 +129,14 @@ export default function FilterMenu({ setData, setTotalPage, pagination }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <Segmented
+        options={messageConfigs}
+        onChange={(value) => {
+          setMessageType(value)
+        }}
+        block
+        className="w-[300px]"
+      />
     </div>
   )
 }
@@ -133,5 +144,7 @@ export default function FilterMenu({ setData, setTotalPage, pagination }) {
 FilterMenu.propTypes = {
   setData: PropTypes.func.isRequired,
   setTotalPage: PropTypes.func.isRequired,
-  pagination: PropTypes.number
+  pagination: PropTypes.number,
+  messageType: PropTypes.string,
+  setMessageType: PropTypes.func
 }

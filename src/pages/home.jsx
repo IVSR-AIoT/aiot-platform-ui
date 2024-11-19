@@ -7,7 +7,7 @@ function Home() {
     <div className="h-screen bg-[#F0F2F5]">
       <Header />
       <div className="pt-[50px]">
-        <Link to="/dashboard" className="bg-slate-200 ">
+        <Link to="/alert" className="bg-slate-200 ">
           Go to dashboard
         </Link>
       </div>
