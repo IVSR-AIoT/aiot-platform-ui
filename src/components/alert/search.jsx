@@ -1,12 +1,10 @@
 import { Input, Segmented, Select, DatePicker, message } from 'antd'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { isUser } from '~/hook/useAuth'
-import { getListProjectService } from '~/services/projectServices'
-import { listDeviceByProjectIdService } from '~/services/deviceService'
+import { listProjectAndDevice } from '~/services/projectServices'
 import { getMessageService } from '~/services/messageService'
 import { messageConfigs } from '~/configs/alert'
-
+import { isUser } from '~/hook/useAuth'
 export default function FilterMenu({
   setData,
   setTotalPage,
@@ -15,6 +13,7 @@ export default function FilterMenu({
   messageType
 }) {
   const { RangePicker } = DatePicker
+  const [projectAndDevice, setProjectAndDevice] = useState([])
   const [projectOptions, setProjectOptions] = useState([])
   const [deviceOptions, setDeviceOptions] = useState([])
   const [selectedDevice, setSelectedDevice] = useState()
@@ -25,26 +24,21 @@ export default function FilterMenu({
   })
   const [query, setQuery] = useState('')
 
-  const getListProject = async () => {
+  const getListProjectAndDevice = async () => {
     try {
-      if (!isUser()) {
-        const res = await getListProjectService()
-        const data = res.map((item) => ({ label: item.name, value: item.id }))
-        setProjectOptions(data)
-      }
+      const res = await listProjectAndDevice()
+      setProjectAndDevice(res)
+      const projectOptions = res.map((item) => ({ label: item.name, value: item.id }))
+      setProjectOptions(projectOptions)
     } catch {
-      message.error('Failed to load projects. Please try again.')
+      message.error('error')
     }
   }
 
-  const getListDeviceInProject = async (projectId) => {
-    try {
-      const res = await listDeviceByProjectIdService(projectId)
-      const data = res.data.map((item) => ({ label: item.name, value: item.id }))
-      setDeviceOptions(data)
-    } catch {
-      message.error('Failed to load devices for the selected project.')
-    }
+  const handleAssignDevice = (projectId) => {
+    const project = projectAndDevice.find((item) => item.id === projectId)
+    const device = project?.device.map((item) => ({ label: item.name, value: item.id }))
+    setDeviceOptions(device)
   }
 
   const getMessage = async () => {
@@ -62,8 +56,8 @@ export default function FilterMenu({
         query,
         pagination
       )
-      setTotalPage(res.data.total)
-      setData(res.data.data)
+      setTotalPage(res.total)
+      setData(res.data)
     } catch (error) {
       console.error(error)
       message.error('Failed to retrieve messages. Please try again.')
@@ -71,23 +65,23 @@ export default function FilterMenu({
   }
 
   useEffect(() => {
+    getListProjectAndDevice()
+  }, [])
+
+  useEffect(() => {
     if (projectOptions.length > 0) {
       const firstProject = projectOptions[0].value
       setSelectedProject(firstProject)
-      getListDeviceInProject(firstProject)
+      handleAssignDevice(firstProject)
     }
   }, [projectOptions])
 
   useEffect(() => {
-    if (deviceOptions.length > 0) {
+    if (deviceOptions?.length > 0) {
       const firstDevice = deviceOptions[0].value
       setSelectedDevice(firstDevice)
     }
   }, [deviceOptions])
-
-  useEffect(() => {
-    getListProject()
-  }, [])
 
   useEffect(() => {
     if (selectedDevice) {
@@ -98,7 +92,7 @@ export default function FilterMenu({
   }, [selectedProject, selectedDevice, messageType, dateRange, query, pagination])
 
   return (
-    <div className="grid grid-cols-4 gap-4 place-content-center">
+    <div className="grid grid-cols-4 gap-4 place-content-center mb-[20px]">
       <Select
         options={projectOptions}
         className="w-[200px]"
@@ -106,7 +100,7 @@ export default function FilterMenu({
         onChange={(value) => {
           setSelectedProject(value)
           setSelectedDevice(null)
-          getListDeviceInProject(value)
+          handleAssignDevice(value)
         }}
         value={selectedProject}
         allowClear
@@ -129,14 +123,16 @@ export default function FilterMenu({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <Segmented
-        options={messageConfigs}
-        onChange={(value) => {
-          setMessageType(value)
-        }}
-        block
-        className="w-[300px]"
-      />
+      {!isUser() ? (
+        <Segmented
+          options={messageConfigs}
+          onChange={(value) => {
+            setMessageType(value)
+          }}
+          block
+          className="w-[300px]"
+        />
+      ) : null}
     </div>
   )
 }
