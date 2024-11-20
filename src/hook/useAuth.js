@@ -1,3 +1,5 @@
+import { jwtDecode } from 'jwt-decode'
+
 export const isAuthentication = () => {
   return localStorage.getItem('accessToken') !== null
 }
@@ -7,7 +9,7 @@ export const getUser = () => {
   if (!token) {
     return null
   }
-  const payload = JSON.parse(atob(token.split('.')[1]))
+  const payload = jwtDecode(token)
 
   return payload
 }
