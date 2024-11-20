@@ -9,9 +9,12 @@ export const getUser = () => {
   if (!token) {
     return null
   }
-  const payload = jwtDecode(token)
 
-  return payload
+  const payload = jwtDecode(token)
+    return payload
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export const isAdmin = () => {
