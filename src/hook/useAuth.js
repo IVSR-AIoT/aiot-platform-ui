@@ -9,8 +9,8 @@ export const getUser = () => {
   if (!token) {
     return null
   }
-  const payload = jwtDecode(token)
 
+  const payload = jwtDecode(token)
   return payload
 }
 
