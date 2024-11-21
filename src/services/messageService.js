@@ -1,6 +1,13 @@
 import apiInstances from './api'
 
-export const getMessageService = async (messageType, deviceId, start, end, query, pagnition) => {
+export const getMessageService = async (
+  messageType,
+  deviceId,
+  start,
+  end,
+  eventType,
+  pagnition
+) => {
   try {
     let url = `/${messageType}?device_id=${deviceId}`
     if (start) {
@@ -9,12 +16,13 @@ export const getMessageService = async (messageType, deviceId, start, end, query
     if (end) {
       url += `&end=${end}`
     }
-    if (query) {
-      url += `&q=${query}`
+    if (eventType) {
+      url += `&type=${eventType}`
     }
     if (pagnition) {
       url += `&page=${pagnition}`
     }
+    url += `&limit=10`
     const response = await apiInstances.get(url)
     return response.data
   } catch (error) {

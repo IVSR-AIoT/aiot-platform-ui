@@ -1,4 +1,4 @@
-import { Pagination } from 'antd'
+import { Pagination, Spin } from 'antd'
 import { useState } from 'react'
 import CreateSupportModal from '~/components/manage-support/createSupportModal'
 import ModalListObject from '~/components/alert/modalListObject'
@@ -7,6 +7,7 @@ import MessageList from '~/components/alert/messageList'
 import { messageConfigs } from '~/configs/alert'
 
 function Alert() {
+  const [loading, setLoading] = useState(false)
   const [messageType, setMessageType] = useState(messageConfigs[0])
   const [data, setData] = useState([])
   const [totalPage, setTotalPage] = useState()
@@ -15,38 +16,42 @@ function Alert() {
   const [detailMessage, setDetailMessage] = useState()
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] p-5">
-      <FilterMenu
-        setData={setData}
-        pagination={pagination}
-        setTotalPage={setTotalPage}
-        messageType={messageType}
-        setMessageType={setMessageType}
-      />
-      <CreateSupportModal />
-      <MessageList
-        data={data}
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        setDetailMessage={setDetailMessage}
-        messageType={messageType}
-      />
-      <ModalListObject
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        detailMessage={detailMessage}
-        messageType={messageType}
-      />
+    <Spin spinning={loading}>
+      <div className="min-h-screen bg-[#F0F2F5] p-5">
+        <FilterMenu
+          loading={loading}
+          setLoading={setLoading}
+          setData={setData}
+          pagination={pagination}
+          setTotalPage={setTotalPage}
+          messageType={messageType}
+          setMessageType={setMessageType}
+        />
+        <CreateSupportModal />
+        <MessageList
+          data={data}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          setDetailMessage={setDetailMessage}
+          messageType={messageType}
+        />
+        <ModalListObject
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          detailMessage={detailMessage}
+          messageType={messageType}
+        />
 
-      <Pagination
-        align="center"
-        defaultCurrent={1}
-        total={totalPage ? totalPage / 2 : 0}
-        onChange={(value) => {
-          setPagination(value)
-        }}
-      />
-    </div>
+        <Pagination
+          align="center"
+          defaultCurrent={1}
+          total={totalPage}
+          onChange={(value) => {
+            setPagination(value)
+          }}
+        />
+      </div>
+    </Spin>
   )
 }
 

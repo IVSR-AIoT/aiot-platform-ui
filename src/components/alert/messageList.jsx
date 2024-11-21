@@ -36,21 +36,29 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
             >
               <List.Item.Meta
                 title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
-                description={messageType === 'object' ? item?.specs?.description : item?.payload}
+                description={
+                  messageType === 'notification'
+                    ? item?.payload
+                    : messageType === 'object'
+                      ? item?.specs?.description
+                      : ''
+                }
               />
-              <div className="grid grid-cols-4 place-items-center place-content-center ml-[-10px]">
-                <p>
-                  <label className="font-semibold">Timestamp:</label> {formatDate(item?.timestamp)}
+              <div className="flex">
+                <p className="mr-[15px]">
+                  <strong>Timestamp:</strong> {formatDate(item?.timestamp)}
                 </p>
                 {messageType === 'object' ? (
-                  <p>
-                    <label className="font-semibold w-[80px]">Camera:</label>{' '}
-                    {item?.specs?.camera.id} - {item?.specs?.camera?.type}
+                  <p className="mr-[15px]">
+                    <strong>Camera:</strong> {item?.specs?.camera.id} - {item?.specs?.camera?.type}
                   </p>
                 ) : null}
-                <p>
-                  <label className="font-semibold w-[80px]">Device:</label> {item?.device.id} -{' '}
-                  {item?.device?.mac_address}
+                <p className="mr-[15px]">
+                  <strong>Device:</strong> {item?.device.name} - {item?.device?.mac_address}
+                </p>
+                <p className="mr-[15px]">
+                  <strong>Status:</strong>{' '}
+                  {item?.device?.isActive === false ? 'Inactive' : 'Active'}
                 </p>
               </div>
             </List.Item>
