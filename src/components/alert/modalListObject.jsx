@@ -91,7 +91,9 @@ export default function ModalListObject({ detailMessage, openModal, setOpenModal
         )}
         <div className="grid grid-cols-3 gap-4">
           {dataSource.map((item, index) => (
+
             <Card key={index} cover={<img alt="object_image" src={item?.image_URL} />}>
+
               <LabelValue label="Type" value={item.object?.type} />
               {item.object?.type === 'human' ? (
                 <>
