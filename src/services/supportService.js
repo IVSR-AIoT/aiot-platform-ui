@@ -1,21 +1,41 @@
 import api from './api'
 
 export const getList = async () => {
-  const response = await api.get('/support')
-  return response.data
+  try {
+    const response = await api.get('/support')
+    return response.data
+  } catch (error) {
+    console.error('Error fetching the support list:', error)
+    throw error
+  }
 }
 
 export const CreateIssueService = async (data) => {
-  const response = await api.post('/support', data)
-  return response
+  try {
+    const response = await api.post('/support', data)
+    return response
+  } catch (error) {
+    console.error('Error creating a new issue:', error)
+    throw error
+  }
 }
 
 export const getListByQuery = async (data) => {
-  const response = await api.get(`/support?q=${data}`)
-  return response.data
+  try {
+    const response = await api.get(`/support?q=${data}`)
+    return response.data
+  } catch (error) {
+    console.error(`Error fetching support list by query "${data}":`, error)
+    throw error
+  }
 }
 
 export const replyService = async (data, supportId) => {
-  const response = await api.put(`/support/${supportId}`, data)
-  return response
+  try {
+    const response = await api.put(`/support/${supportId}`, data)
+    return response
+  } catch (error) {
+    console.error(`Error replying to support ID ${supportId}:`, error)
+    throw error
+  }
 }
