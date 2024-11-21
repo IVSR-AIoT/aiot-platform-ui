@@ -45,14 +45,14 @@ export default function ModalListObject({ detailMessage, openModal, setOpenModal
 
   useEffect(() => {
     const fetchMessageDetails = async () => {
-      const data = detailMessage?.external_messages?.find((item) => item.type === notiType)
-      if (!data) return
-
-      const body = JSON.stringify({ message_id: data.message_id })
       try {
+        const data = detailMessage?.external_messages?.find((item) => item.type === notiType)
+        if (!data) return
+        const body = JSON.stringify({ message_id: data.message_id })
         const res = await getDetailMessageService(notiType, body)
         setDataSource(res.data?.object_list || [])
-      } catch {
+      } catch (error) {
+        console.log(error)
         message.error('An error occurred while fetching the message.')
       }
     }
@@ -91,9 +91,7 @@ export default function ModalListObject({ detailMessage, openModal, setOpenModal
         )}
         <div className="grid grid-cols-3 gap-4">
           {dataSource.map((item, index) => (
-
             <Card key={index} cover={<img alt="object_image" src={item?.image_URL} />}>
-
               <LabelValue label="Type" value={item.object?.type} />
               {item.object?.type === 'human' ? (
                 <>

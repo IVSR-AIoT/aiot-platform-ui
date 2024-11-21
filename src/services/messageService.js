@@ -25,7 +25,7 @@ export const getMessageService = async (messageType, deviceId, start, end, query
 
 export const getDetailMessageService = async (messageType, body) => {
   try {
-    const response = await apiInstances.get(`/${messageType}/detail`, { params: body })
+    const response = await apiInstances.get(`/${messageType}/detail`, body)
     return response
   } catch (error) {
     console.error(`Error fetching message details for type ${messageType}:`, error)
