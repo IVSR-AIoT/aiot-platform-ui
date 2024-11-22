@@ -17,7 +17,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
               actions={[
                 <Button
                   type="primary"
-                  key="watch-video"
+                  key="detail"
                   onClick={() => {
                     setOpenModal(true)
                     setDetailMessage(item)
@@ -34,7 +34,8 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
               ]}
               extra={<Map />}
             >
-              <List.Item.Meta
+              <div className="flex relative">
+                <List.Item.Meta
                 title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
                 description={
                   messageType === 'notification'
@@ -44,7 +45,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
                       : ''
                 }
               />
-              <div className="flex">
+              <div className="flex flex-col gap-[15px] absolute left-[55%]">
                 <p className="mr-[15px]">
                   <strong>Timestamp:</strong> {formatDate(item?.timestamp)}
                 </p>
@@ -60,6 +61,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
                   <strong>Status:</strong>{' '}
                   {item?.device?.isActive === false ? 'Inactive' : 'Active'}
                 </p>
+              </div>
               </div>
             </List.Item>
           )
