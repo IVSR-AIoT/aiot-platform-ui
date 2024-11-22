@@ -23,13 +23,13 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
                     setDetailMessage(item)
                   }}
                 >
-                  Watch Video
+                  Detail
+                </Button>,
+                <Button type="primary" ghost key="accept">
+                  Accept
                 </Button>,
                 <Button danger key="reject">
                   Dismiss
-                </Button>,
-                <Button type="primary" ghost key="accept">
-                  Acknowledge
                 </Button>
               ]}
               extra={<Map />}

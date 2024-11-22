@@ -65,7 +65,13 @@ const Device = () => {
         dataIndex: 'status',
         key: 'status',
         width: 100,
-        render: (_, record) => <Switch checked={record.status} />
+        render: (_, record) => (
+          <Switch
+            checked={record.status}
+            checkedChildren="Active"
+            unCheckedChildren="inActive"
+          />
+        )
       },
       ...columns,
       {
