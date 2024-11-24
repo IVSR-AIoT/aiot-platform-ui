@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react'
+import { Button } from 'antd'
 
-// eslint-disable-next-line react/prop-types
-const DotAreaApp = ({ initialDots = [], initialHull = [] }) => {
+const DotAreaApp = ({ initialDots = [], initialHull = [], onAreaChange, size = 500 }) => {
   const [dots, setDots] = useState(initialDots)
   const [hull, setHull] = useState(initialHull)
 
@@ -13,6 +14,7 @@ const DotAreaApp = ({ initialDots = [], initialHull = [] }) => {
     setDots((prevDots) => {
       const newDots = [...prevDots, { x, y }]
       calculateConvexHull(newDots)
+
       return newDots
     })
   }
@@ -20,11 +22,14 @@ const DotAreaApp = ({ initialDots = [], initialHull = [] }) => {
   const clearDots = () => {
     setDots([])
     setHull([])
+    if (onAreaChange) onAreaChange([])
   }
 
   const calculateConvexHull = (points) => {
     if (points.length < 3) {
       setHull([])
+      if (onAreaChange) onAreaChange([])
+
       return
     }
 
@@ -58,18 +63,19 @@ const DotAreaApp = ({ initialDots = [], initialHull = [] }) => {
     upperHull.pop()
     lowerHull.pop()
 
-    setHull([...lowerHull, ...upperHull])
+    const newHull = [...lowerHull, ...upperHull]
+    setHull(newHull)
+    if (onAreaChange) onAreaChange(newHull)
   }
 
   return (
-    <div>
-      <h1>Vẽ điểm và tính đường bao (Convex Hull)</h1>
+    <div className="p-[20px]">
       <div
         onClick={handleCanvasClick}
         style={{
-          width: '500px',
-          height: '500px',
-          border: '1px solid black',
+          width: `${size}px`,
+          height: `${size}px`,
+          border: '2px solid black',
           position: 'relative',
           background: '#f0f0f0'
         }}
@@ -130,37 +136,9 @@ const DotAreaApp = ({ initialDots = [], initialHull = [] }) => {
         )}
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h2>Tọa độ các điểm:</h2>
-        {dots.length > 0 ? (
-          <ul>
-            {dots.map((dot, index) => (
-              <li key={index}>
-                Điểm {index + 1}: (X: {dot.x}, Y: {dot.y})
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Chưa có điểm nào được vẽ.</p>
-        )}
-
-        {hull.length > 0 && (
-          <>
-            <h2>Tọa độ các điểm đường bao:</h2>
-            <ul>
-              {hull.map((dot, index) => (
-                <li key={index}>
-                  Điểm {index + 1}: (X: {dot.x}, Y: {dot.y})
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-
-      <button onClick={clearDots} style={{ marginTop: '10px' }}>
-        Xóa điểm
-      </button>
+      <Button onClick={clearDots} className="mt-[10px]">
+        Delete Area
+      </Button>
     </div>
   )
 }
