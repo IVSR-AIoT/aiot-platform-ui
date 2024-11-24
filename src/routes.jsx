@@ -9,7 +9,7 @@ import ForgotPassword from '~/pages/forgotPassword'
 import ResetPassword from '~/pages/resetPassword'
 import ManageSupport from './pages/manageSupport'
 import ManageProject from './pages/manageProject'
-import canvas from './components/canvas.jsx'
+import canvas from './components/selectArea.jsx'
 
 const publicRoutes = [
   { path: RoutesConfig.login, component: Login },
