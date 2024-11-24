@@ -34,7 +34,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
               ]}
               extra={<Map />}
             >
-              <div className="flex relative">
+              <div className="">
                 <List.Item.Meta
                   title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
                   description={
@@ -45,7 +45,7 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
                         : ''
                   }
                 />
-                <div className="flex flex-col gap-[15px] absolute left-[55%]">
+                <div>
                   <p className="mr-[15px]">
                     <strong>Timestamp:</strong> {formatDate(item?.timestamp)}
                   </p>

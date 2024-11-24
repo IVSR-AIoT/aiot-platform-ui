@@ -9,5 +9,5 @@ export const RoutesConfig = {
   resetPassword: '/reset-password/:token',
   manageSupport: '/manage-support',
   manageProject: '/manage-project',
-  test: '/test'
+  selectArea: '/select'
 }
