@@ -34,34 +34,35 @@ export default function MessageList({ data, setOpenModal, setDetailMessage, mess
               ]}
               extra={<Map />}
             >
-              <div className="flex relative">
+              <div className="">
                 <List.Item.Meta
-                title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
-                description={
-                  messageType === 'notification'
-                    ? item?.payload
-                    : messageType === 'object'
-                      ? item?.specs?.description
-                      : ''
-                }
-              />
-              <div className="flex flex-col gap-[15px] absolute left-[55%]">
-                <p className="mr-[15px]">
-                  <strong>Timestamp:</strong> {formatDate(item?.timestamp)}
-                </p>
-                {messageType === 'object' ? (
+                  title={<h1 className="font-bold text-[20px]">{item?.message_id}</h1>}
+                  description={
+                    messageType === 'notification'
+                      ? item?.payload
+                      : messageType === 'object'
+                        ? item?.specs?.description
+                        : ''
+                  }
+                />
+                <div>
                   <p className="mr-[15px]">
-                    <strong>Camera:</strong> {item?.specs?.camera.id} - {item?.specs?.camera?.type}
+                    <strong>Timestamp:</strong> {formatDate(item?.timestamp)}
                   </p>
-                ) : null}
-                <p className="mr-[15px]">
-                  <strong>Device:</strong> {item?.device.name} - {item?.device?.mac_address}
-                </p>
-                <p className="mr-[15px]">
-                  <strong>Status:</strong>{' '}
-                  {item?.device?.isActive === false ? 'Inactive' : 'Active'}
-                </p>
-              </div>
+                  {messageType === 'object' ? (
+                    <p className="mr-[15px]">
+                      <strong>Camera:</strong> {item?.specs?.camera.id} -{' '}
+                      {item?.specs?.camera?.type}
+                    </p>
+                  ) : null}
+                  <p className="mr-[15px]">
+                    <strong>Device:</strong> {item?.device.name} - {item?.device?.mac_address}
+                  </p>
+                  <p className="mr-[15px]">
+                    <strong>Status:</strong>{' '}
+                    {item?.device?.isActive === false ? 'Inactive' : 'Active'}
+                  </p>
+                </div>
               </div>
             </List.Item>
           )
