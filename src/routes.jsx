@@ -9,13 +9,15 @@ import ForgotPassword from '~/pages/forgotPassword'
 import ResetPassword from '~/pages/resetPassword'
 import ManageSupport from './pages/manageSupport'
 import ManageProject from './pages/manageProject'
+import canvas from './components/canvas.jsx'
 
 const publicRoutes = [
   { path: RoutesConfig.login, component: Login },
   { path: RoutesConfig.register, component: Register },
   { path: RoutesConfig.home, component: Home },
   { path: RoutesConfig.forgotPassword, component: ForgotPassword },
-  { path: RoutesConfig.resetPassword, component: ResetPassword }
+  { path: RoutesConfig.resetPassword, component: ResetPassword },
+  { path: RoutesConfig.test, component: canvas }
 ]
 
 const privateRoutes = [
