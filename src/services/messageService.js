@@ -9,7 +9,10 @@ export const getMessageService = async (
   pagnition
 ) => {
   try {
-    let url = `/${messageType}?device_id=${deviceId}`
+    let url = `/${messageType}?`
+    if (deviceId) {
+      url += `device_id=${deviceId}`
+    }
     if (start) {
       url += `&start=${start}`
     }
@@ -37,6 +40,16 @@ export const getDetailMessageService = async (messageType, body) => {
     return response
   } catch (error) {
     console.error(`Error fetching message details for type ${messageType}:`, error)
+    throw error
+  }
+}
+
+export const getTotalMessage = async () => {
+  try {
+    const response = await apiInstances.get(`/notification`)
+    return response
+  } catch (error) {
+    console.log(error)
     throw error
   }
 }

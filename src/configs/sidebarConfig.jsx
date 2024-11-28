@@ -4,7 +4,8 @@ import {
   ProjectOutlined,
   PhoneOutlined,
   ProjectFilled,
-  SettingOutlined
+  SettingOutlined,
+  AlertFilled
 } from '@ant-design/icons'
 export const listItems = [
   {
@@ -14,9 +15,15 @@ export const listItems = [
     children: [
       {
         key: '1',
-        icon: <SignalFilled />,
+        icon: <AlertFilled />,
         label: 'Alert',
         route: '/alert'
+      },
+      {
+        key: '4',
+        icon: <SignalFilled />,
+        label: 'Chart',
+        route: '/chart'
       },
       {
         key: '2',

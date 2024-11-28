@@ -25,7 +25,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
 
     try {
       if (data) {
-        await updateProject(data.project.id, value)
+        await updateProject(data.project ? data?.project?.id : data?.id, value)
         message.success('Your project has been successfully updated.')
       } else {
         await createProject(value)
@@ -75,6 +75,7 @@ function Dialog({ getProjectFunc, data, onclose }) {
           label: item.email,
           value: item.id
         }))
+
         setUserInProject(projectUsers)
       } catch (error) {
         message.error('There was an error while loading project of users.')
@@ -89,15 +90,15 @@ function Dialog({ getProjectFunc, data, onclose }) {
 
   useEffect(() => {
     if (data) {
-      getUserByProjectId(data.project.id)
+      getUserByProjectId(data.project ? data?.project?.id : data?.id)
     }
   }, [data, getUserByProjectId])
 
   useEffect(() => {
     if (data && userInProject.length >= 0) {
       form.setFieldsValue({
-        name: data.project.name,
-        description: data.project.description,
+        name: data.project ? data?.project?.name : data?.name,
+        description: data.project ? data?.project?.description : data?.description,
         userIds: userInProject
       })
     }
