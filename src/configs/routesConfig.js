@@ -3,6 +3,7 @@ export const RoutesConfig = {
   register: '/register',
   home: '/',
   alert: '/alert',
+  chart: 'chart',
   project: '/project',
   device: '/device',
   forgotPassword: '/forgot-password',

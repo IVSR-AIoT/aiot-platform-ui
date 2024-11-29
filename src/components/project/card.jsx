@@ -20,7 +20,7 @@ export default function Card({ data, getProjectFunc, onclick }) {
   const [list, setList] = useState([])
   const listDeviceByProjectId = async () => {
     try {
-      const res = await listDeviceByProjectIdService(data.project.id)
+      const res = await listDeviceByProjectIdService(data.project ? data?.project?.id : data?.id)
       setList(res.data)
     } catch {
       message.error('error')
@@ -41,7 +41,7 @@ export default function Card({ data, getProjectFunc, onclick }) {
   const deleteProjectFunc = async () => {
     setLoading(true)
     try {
-      const res = await deleteProject(data.project.id)
+      const res = await deleteProject(data.project ? data?.project?.id : data?.id)
       message.success('Delete successful!')
       getProjectFunc()
       return res
@@ -104,8 +104,9 @@ export default function Card({ data, getProjectFunc, onclick }) {
           }}
           className="cursor-pointer overflow-hidden w-[100px] "
         >
-          {data.project.name}
+          {data.project ? data?.project?.name : data?.name}
         </p>
+
         {isAdmin() ? (
           <div className="flex">
             <button onClick={confirmDelete} disabled={loading}>
@@ -130,7 +131,9 @@ export default function Card({ data, getProjectFunc, onclick }) {
           </button>
         )}
       </div>
-      <div className="whitespace-pre-wrap ">{data.project.description}</div>
+      <div className="whitespace-pre-wrap ">
+        {data.project ? data?.project?.description : data?.description}
+      </div>
       {contextHolder}
     </div>
   )

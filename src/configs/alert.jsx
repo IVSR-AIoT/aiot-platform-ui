@@ -1,5 +1,6 @@
 export const messageConfigs = ['object', 'sensor', 'notification']
 export const type = [
+  { label: 'All', value: 'all' },
   { label: 'Human', value: 'human' },
   { label: 'Vehicle', value: 'vehicle' }
 ]
