@@ -1,26 +1,28 @@
-import { DatePicker, Select } from 'antd'
+import { DatePicker, InputNumber, Select } from 'antd'
 import PropTypes from 'prop-types'
 
 const { RangePicker } = DatePicker
-export default function FilterMenu({
-  setDateRange,
-  deviceOption,
-  selectedDevices,
-  setSelectedDevices
-}) {
+export default function FilterMenu({ setDateRange, limit, setLimit }) {
   return (
-    <div className="grid grid-cols-3 mb-5">
+    <div className="grid lg:grid-cols-3 lg:place-content-center lg:place-items-center mb-5 md:grid-cols-1 md:place-items-start">
       <div>
         <strong className="mr-2">Devices:</strong>
         <Select
           mode="multiple"
           maxTagCount={'responsive'}
           placeholder={'Select devices...'}
-          options={deviceOption}
           className="w-[250px]"
           allowClear
-          value={selectedDevices}
-          onChange={setSelectedDevices}
+        />
+      </div>
+      <div>
+        <strong className="mr-2">Limit messages:</strong>
+        <InputNumber
+          className="w-[250px]"
+          value={limit}
+          onChange={(value) => {
+            setLimit(value)
+          }}
         />
       </div>
       <RangePicker
@@ -31,8 +33,7 @@ export default function FilterMenu({
   )
 }
 FilterMenu.propTypes = {
-  setSelectedDevices: PropTypes.func,
   setDateRange: PropTypes.func,
-  deviceOption: PropTypes.array,
-  selectedDevices: PropTypes.array
+  setLimit: PropTypes.func,
+  limit: PropTypes.number
 }

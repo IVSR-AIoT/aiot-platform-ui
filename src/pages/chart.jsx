@@ -1,160 +1,135 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import BarChart from '~/components/chart/barChart'
 import FilterMenu from '~/components/chart/filter'
 import PieChart from '~/components/chart/pieChart'
+import { messageTypes } from '~/configs/alert'
+import { handleCountStatus } from '~/configs/chartFunc'
+import useDebounce from '~/hook/useDebounce'
 import { deviceListService } from '~/services/deviceService'
 import { getMessageService } from '~/services/messageService'
-import { type } from '~/configs/alert'
 
 export default function Chart() {
-  const [listDevices, setListDevices] = useState([])
-  const [selectedDevices, setSelectedDevices] = useState([])
-  const [deviceOption, setDeviceOption] = useState([])
+  const [numberOfMessage, setNumberOfMessage] = useState([])
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null
   })
-  const [barData, setBarData] = useState({
-    labels: [],
+  const [typeMessageChart, setTypeMessageChart] = useState({
+    labels: messageTypes.map((item) => item.label),
     datasets: [
       {
-        label: 'Notifications',
-        backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850'],
-        data: []
+        label: 'Message Types',
+        data: [],
+        backgroundColor: ['#4caf50', '#2196f3', '#ff9800'],
+        borderColor: ['#388e3c', '#1976d2', '#f57c00'],
+        borderWidth: 1
       }
     ]
   })
-  const [pieData, setPieData] = useState({
-    labels: type.map((item) => item.label),
+  const [statusChart, setStatusChart] = useState({
+    labels: ['Active', 'Inactive'],
     datasets: [
       {
-        label: 'Type Detections',
-        backgroundColor: ['#3e95cd', '#8e5ea2', '#c45850'],
-        data: []
+        label: 'Devices status',
+        data: [],
+        backgroundColor: ['#4caf50', '#f44336'],
+        borderColor: ['#388e3c', '#d32f2f'],
+        borderWidth: 1
       }
     ]
   })
+  const [limit, setLimit] = useState(50)
+  const debounceValue = useDebounce(limit, 500)
 
-  const setDetectionType = async () => {
+  // Fetch messages
+  const getTotalMessage = async () => {
     try {
-      const numberTypeDetection = await Promise.all(
-        type.map((item) =>
-          getMessageService(
-            'object',
-            null,
-            dateRange.startDate,
-            dateRange.endDate,
-            item.value,
-            null
-          )
-            .then((msgRes) => msgRes.total)
-            .catch(() => 0)
+      for (const item of messageTypes) {
+        const res = await getMessageService(
+          item.value,
+          null,
+          dateRange.startDate,
+          dateRange.endDate,
+          null,
+          null,
+          debounceValue
         )
-      )
-      setPieData({
-        labels: type.map((item) => item.label),
-        datasets: [
-          {
-            label: 'Type Detections',
-            backgroundColor: ['#3e95cd', '#8e5ea2', '#c45850'],
-            data: numberTypeDetection
-          }
-        ]
-      })
+        setNumberOfMessage((prev) => [...prev, res?.total])
+      }
+      setTypeMessageChart((prev) => ({
+        ...prev,
+        datasets: prev.datasets.map((dataset) => ({
+          ...dataset,
+          data: numberOfMessage
+        }))
+      }))
     } catch (error) {
-      console.log(error)
+      console.error('Error fetching messages:', error)
     }
   }
-  const handleListDevice = async () => {
+
+  // Fetch devices
+  const getTotalDevice = async () => {
     try {
       const res = await deviceListService()
-      const devices = res.data
-      setListDevices(res.data)
-      setDeviceOption(
-        devices.map((item) => ({ label: item.name || item.mac_address, value: item.id }))
-      )
+      const dataSet = handleCountStatus(res.data)
+
+      setStatusChart((prev) => ({
+        ...prev,
+        datasets: prev.datasets.map((dataset) => ({
+          ...dataset,
+          data: dataSet
+        }))
+      }))
+      return res
     } catch (error) {
-      console.error('Error fetching devices or messages:', error)
+      console.error(error)
     }
   }
 
-  const handleAssign = async () => {
-    let notifications
-    if (selectedDevices.length !== 0) {
-      notifications = await Promise.all(
-        selectedDevices.map((device) =>
-          getMessageService(
-            'notification',
-            device,
-            dateRange.startDate,
-            dateRange.endDate,
-            null,
-            null
-          )
-            .then((msgRes) => msgRes.total)
-            .catch(() => 0)
-        )
-      )
-    } else {
-      notifications = await Promise.all(
-        listDevices.map((device) =>
-          getMessageService(
-            'notification',
-            device.id,
-            dateRange.startDate,
-            dateRange.endDate,
-            null,
-            null
-          )
-            .then((msgRes) => msgRes.total)
-            .catch(() => 0)
-        )
-      )
-    }
-
-    setBarData({
-      labels: listDevices.map((device) => device.name || device.mac_address),
-      datasets: [
-        {
-          label: 'Notifications',
-          backgroundColor: ['#3e95cd', '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850'],
-          data: notifications
-        }
-      ]
-    })
-  }
-
-  const options = {
-    legend: { display: false },
-    title: {
-      display: true,
-      text: 'Device Notifications'
-    }
-  }
-
-  useEffect(() => {
-    handleListDevice()
-    setDetectionType()
-  }, [])
-
-  useEffect(() => {
-    handleAssign()
-  }, [dateRange, selectedDevices, listDevices])
+  useSWR(['/', dateRange.startDate, dateRange.endDate, debounceValue], getTotalMessage)
+  useSWR('/', getTotalDevice)
 
   return (
     <div className="p-5">
-      <FilterMenu
-        setDateRange={setDateRange}
-        deviceOption={deviceOption}
-        selectedDevices={selectedDevices}
-        setSelectedDevices={setSelectedDevices}
-      />
-      <div className=" grid grid-cols-2 place-content-center place-items-center">
+      <FilterMenu setDateRange={setDateRange} limit={limit} setLimit={setLimit} />
+      <div className="grid grid-cols-2 place-content-center place-items-center">
         <div className="w-[600px] h-[300px]">
-          <BarChart data={barData} options={options} />
+          <PieChart
+            data={statusChart}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Devices status chart'
+                },
+                legend: {
+                  display: true,
+                  position: 'bottom'
+                }
+              },
+              maintainAspectRatio: false
+            }}
+          />
         </div>
         <div className="w-[300px] h-[300px]">
-          <PieChart data={pieData} />
+          <BarChart
+            data={typeMessageChart}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Message type chart'
+                },
+                legend: {
+                  display: true,
+                  position: 'bottom'
+                }
+              },
+              maintainAspectRatio: false
+            }}
+          />
         </div>
       </div>
     </div>

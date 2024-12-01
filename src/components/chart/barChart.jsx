@@ -6,12 +6,12 @@ import {
   LinearScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  plugins
 } from 'chart.js'
 import PropTypes from 'prop-types'
 
-// Register required components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend)
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, plugins)
 
 export default function BarChart({ data, options }) {
   return (

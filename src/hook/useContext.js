@@ -28,11 +28,29 @@ const SocketProvider = ({ children }) => {
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
 
+const sidebarContext = createContext()
+
+const SidebarProvider = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  const value = { isSidebarOpen, setIsSidebarOpen }
+  return <sidebarContext.Provider value={value}>{children}</sidebarContext.Provider>
+}
+
 ModalSupportProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
-
+SidebarProvider.propTypes = {
+  children: PropTypes.node.isRequired
+}
 SocketProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
-export { modalSupportContext, ModalSupportProvider, SocketContext, SocketProvider }
+export {
+  modalSupportContext,
+  ModalSupportProvider,
+  SocketContext,
+  SocketProvider,
+  sidebarContext,
+  SidebarProvider
+}
