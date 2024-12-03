@@ -23,7 +23,6 @@ const Header = () => {
   const sidebar = useContext(sidebarContext)
   const toggleSidebar = () => {
     const status = sidebar.isSidebarOpen
-    console.log(sidebar)
     sidebar.setIsSidebarOpen(!status)
   }
   const handleLogout = () => {
