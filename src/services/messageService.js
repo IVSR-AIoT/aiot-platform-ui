@@ -6,7 +6,8 @@ export const getMessageService = async (
   start,
   end,
   eventType,
-  pagnition
+  pagnition,
+  limit
 ) => {
   try {
     let url = `/${messageType}?`
@@ -25,7 +26,9 @@ export const getMessageService = async (
     if (pagnition) {
       url += `&page=${pagnition}`
     }
-    url += `&limit=10`
+    if (limit) {
+      url += `&limit=${limit}`
+    }
     const response = await apiInstances.get(url)
     return response.data
   } catch (error) {

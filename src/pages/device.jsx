@@ -78,7 +78,7 @@ const Device = () => {
           <Button
             type="primary"
             ghost
-            className="mr-2"
+            className="mr-2 bg-red-300"
             onClick={() => {
               setOpenModal(true)
               setDevice(record)

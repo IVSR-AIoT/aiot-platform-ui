@@ -1,20 +1,30 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, /*  useLocation, */ useNavigate } from 'react-router-dom'
 import { getUser, isAuthentication } from '~/hook/useAuth'
-import { QuestionCircleFilled, UserOutlined, LogoutOutlined } from '@ant-design/icons'
-import { navigation } from '~/configs/headerConfig'
+import {
+  QuestionCircleFilled,
+  UserOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined
+} from '@ant-design/icons'
+/* import { navigation } from '~/configs/headerConfig' */
 import { useContext } from 'react'
-import { modalSupportContext } from '~/hook/useContext'
+import { modalSupportContext, sidebarContext } from '~/hook/useContext'
 import { Dropdown } from 'antd'
 
 const Header = () => {
   const navigate = useNavigate()
-  const location = useLocation()
+  /* const location = useLocation() */
   const userName = getUser()?.name
   const context = useContext(modalSupportContext)
   const openIssueSupport = () => {
     context.showModal()
   }
 
+  const sidebar = useContext(sidebarContext)
+  const toggleSidebar = () => {
+    const status = sidebar.isSidebarOpen
+    sidebar.setIsSidebarOpen(!status)
+  }
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
     navigate('/login')
@@ -47,15 +57,16 @@ const Header = () => {
     }
   ]
 
-  const enhancedNavigation = navigation.map((item) => ({
+  /*  const enhancedNavigation = navigation.map((item) => ({
     ...item,
     selected: item.route === location.pathname
-  }))
+  })) */
 
   return (
     <div className="h-[50px] w-full bg-white flex justify-between items-center px-[30px] fixed top-0 z-50 shadow-sm">
       <div className="h-full w-full flex">
-        {enhancedNavigation.map((item, index) => (
+        <MenuFoldOutlined onClick={toggleSidebar} className="text-[24px]" />
+        {/* {enhancedNavigation.map((item, index) => (
           <Link
             to={item.route}
             key={index}
@@ -66,7 +77,7 @@ const Header = () => {
             {item.title}
             {item.selected && <div className="w-full h-[4px] bg-[#0866FF]"></div>}
           </Link>
-        ))}
+        ))} */}
       </div>
       <div className="relative">
         {isAuthentication() ? (

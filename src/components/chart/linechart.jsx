@@ -1,27 +1,28 @@
-import { Bar } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
-  BarElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
-  Legend,
-  plugins
+  Legend
 } from 'chart.js'
 import PropTypes from 'prop-types'
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, plugins)
+// Registering required Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-export default function BarChart({ data, options }) {
+export default function LineChart({ data, options }) {
   return (
     <div className="w-full h-full">
-      <Bar data={data} options={options} />
+      <Line data={data} options={options} />
     </div>
   )
 }
 
-BarChart.propTypes = {
+LineChart.propTypes = {
   data: PropTypes.shape({
     labels: PropTypes.arrayOf(PropTypes.string).isRequired,
     datasets: PropTypes.arrayOf(
@@ -38,10 +39,12 @@ BarChart.propTypes = {
   options: PropTypes.object
 }
 
-BarChart.defaultProps = {
+LineChart.defaultProps = {
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    legend: { display: false }
+    plugins: {
+      legend: { display: false }
+    }
   }
 }
