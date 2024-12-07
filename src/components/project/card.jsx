@@ -6,13 +6,13 @@ import {
   ExclamationCircleOutlined
 } from '@ant-design/icons'
 import { deleteProject } from '~/services/projectServices'
-import { List, message, Modal, Col } from 'antd'
+import { List, message, Modal, Col, Card, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { listDeviceByProjectIdService } from '~/services/deviceService'
 import PropTypes from 'prop-types'
 
-export default function Card({ data, getProjectFunc, onclick }) {
+export default function ProjectCard({ data, getProjectFunc, onclick }) {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState(false)
   const [modal, contextHolder] = Modal.useModal()
@@ -57,7 +57,44 @@ export default function Card({ data, getProjectFunc, onclick }) {
   }
 
   return (
-    <div className="w-[85%] p-4 bg-white border border-gray-200 rounded-lg shadow line-clamp-6">
+    <Card
+      title={
+        <p
+          onClick={() => {
+            setOpenModal(true)
+            listDeviceByProjectId()
+          }}
+        >
+          {data.project ? data?.project?.name : data?.name}
+        </p>
+      }
+      extra={
+        isAdmin() ? (
+          <div className="grid gap-2 grid-cols-2">
+            <Button onClick={confirmDelete} disabled={loading} danger>
+              <DeleteOutlined />
+            </Button>
+
+            <Button
+              onClick={() => {
+                onclick(data)
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => {
+              onclick(data)
+            }}
+          >
+            <EyeOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
+          </Button>
+        )
+      }
+      style={{ width: 250, height: 200 }}
+    >
       <Modal
         title={<h1 className="text-center text-[25px]">Device List</h1>}
         open={openModal}
@@ -95,51 +132,15 @@ export default function Card({ data, getProjectFunc, onclick }) {
           <p className="text-center">No devices available</p>
         )}
       </Modal>
-
-      <div className="flex justify-between h-[40px] border-b-2 items-center overflow-hidden line-clamp-2 ">
-        <p
-          onClick={() => {
-            setOpenModal(true)
-            listDeviceByProjectId()
-          }}
-          className="cursor-pointer overflow-hidden w-[100px] "
-        >
-          {data.project ? data?.project?.name : data?.name}
-        </p>
-
-        {isAdmin() ? (
-          <div className="flex">
-            <button onClick={confirmDelete} disabled={loading}>
-              <DeleteOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
-            </button>
-
-            <button
-              onClick={() => {
-                onclick(data)
-              }}
-            >
-              <EditOutlined className="text-[20px] hover:text-blue-600 transition-colors ml-3" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => {
-              onclick(data)
-            }}
-          >
-            <EyeOutlined className="text-[20px] hover:text-blue-600 transition-colors" />
-          </button>
-        )}
-      </div>
-      <div className="whitespace-pre-wrap ">
+      <div className="whitespace-pre-wrap line-clamp-4">
         {data.project ? data?.project?.description : data?.description}
       </div>
       {contextHolder}
-    </div>
+    </Card>
   )
 }
 
-Card.propTypes = {
+ProjectCard.propTypes = {
   data: PropTypes.object,
   getProjectFunc: PropTypes.func,
   onclick: PropTypes.func

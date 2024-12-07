@@ -1,108 +1,30 @@
-import { Segmented, Select, DatePicker, message } from 'antd'
+import { Segmented, Select, DatePicker, InputNumber } from 'antd'
 import PropTypes from 'prop-types'
-import { useState, useEffect } from 'react'
-import { listProjectAndDevice } from '~/services/projectServices'
-import { getMessageService } from '~/services/messageService'
+import { useState } from 'react'
+
 import { messageConfigs } from '~/configs/alert'
 import { isUser } from '~/hook/useAuth'
 import { type } from '~/configs/alert'
+
 export default function FilterMenu({
-  setData,
-  setTotalPage,
-  pagination,
+  handleAssignDevice,
+  setEventType,
+  setDateRange,
+  eventType,
   setMessageType,
-  messageType,
-  setLoading
+  setLimit,
+  limit,
+  deviceOptions,
+  projectOptions
 }) {
   const { RangePicker } = DatePicker
-  const [projectAndDevice, setProjectAndDevice] = useState([])
-  const [projectOptions, setProjectOptions] = useState([])
-  const [deviceOptions, setDeviceOptions] = useState([])
   const [selectedDevice, setSelectedDevice] = useState()
   const [selectedProject, setSelectedProject] = useState()
-  const [eventType, setEventType] = useState()
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null
-  })
-
-  const getListProjectAndDevice = async () => {
-    setLoading(true)
-    try {
-      const res = await listProjectAndDevice()
-      setProjectAndDevice(res)
-      const projectOptions = res.map((item) => ({ label: item.name, value: item.id }))
-      setProjectOptions(projectOptions)
-    } catch {
-      message.error('Error fetching projects and devices.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleAssignDevice = (projectId) => {
-    const project = projectAndDevice.find((item) => item.id === projectId)
-    const device = project?.device.map((item) => ({ label: item.name, value: item.id }))
-    setDeviceOptions(device)
-  }
-
-  const getMessage = async () => {
-    if (!selectedProject || !selectedDevice || !messageType) {
-      message.warning('Please select a project, device, and message type.')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const res = await getMessageService(
-        messageType,
-        selectedDevice,
-        dateRange.startDate,
-        dateRange.endDate,
-        eventType,
-        pagination
-      )
-      setTotalPage(res.total)
-      setData(res.data)
-    } catch (error) {
-      console.error(error)
-      message.error('Failed to retrieve messages. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    getListProjectAndDevice()
-  }, [])
-
-  useEffect(() => {
-    if (projectOptions.length > 0) {
-      const firstProject = projectOptions[0].value
-      setSelectedProject(firstProject)
-      handleAssignDevice(firstProject)
-    }
-  }, [projectOptions])
-
-  useEffect(() => {
-    if (deviceOptions?.length > 0) {
-      const firstDevice = deviceOptions[0].value
-      setSelectedDevice(firstDevice)
-    }
-  }, [deviceOptions])
-
-  useEffect(() => {
-    if (selectedDevice) {
-      getMessage()
-    } else {
-      setData([])
-    }
-  }, [selectedProject, selectedDevice, messageType, dateRange, eventType, pagination])
 
   return (
-    <div className="grid grid-cols-4 gap-3 place-content-center place-items-center mb-[20px]">
+    <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-3 place-content-center place-items-center mb-[20px]">
       <div className="flex items-center">
-        <label>Select Project:</label>
+        <strong>Select Project:</strong>
         <Select
           options={projectOptions}
           className="w-[180px] ml-1"
@@ -117,7 +39,7 @@ export default function FilterMenu({
         />
       </div>
       <div className="flex items-center">
-        <label>Select Device:</label>
+        <strong>Select Device:</strong>
         <Select
           options={deviceOptions}
           className="w-[180px] ml-1"
@@ -139,6 +61,7 @@ export default function FilterMenu({
         value={eventType}
         onChange={(value) => setEventType(value)}
       />
+
       {!isUser() ? (
         <Segmented
           options={messageConfigs}
@@ -150,16 +73,28 @@ export default function FilterMenu({
           className="w-[300px]"
         />
       ) : null}
+      <div>
+        <strong>Limit:</strong>
+        <InputNumber className="ml-1" defaultValue={limit} onChange={(value) => setLimit(value)} />
+      </div>
     </div>
   )
 }
 
 FilterMenu.propTypes = {
+  deviceOptions: PropTypes.array,
+  handleAssignDevice: PropTypes.func,
+  setDateRange: PropTypes.func,
+  setEventType: PropTypes.func,
   loading: PropTypes.bool,
   setLoading: PropTypes.func,
   setData: PropTypes.func.isRequired,
   setTotalPage: PropTypes.func.isRequired,
   pagination: PropTypes.number,
   messageType: PropTypes.string,
-  setMessageType: PropTypes.func
+  setMessageType: PropTypes.func,
+  limit: PropTypes.number,
+  setLimit: PropTypes.func,
+  eventType: PropTypes.string,
+  projectOptions: PropTypes.array
 }

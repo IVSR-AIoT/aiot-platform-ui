@@ -1,19 +1,12 @@
-import { Link } from 'react-router-dom'
-import CreateSupportModal from '~/components/manage-support/createSupportModal'
-import Header from '~/components/header'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
-  return (
-    <div className="h-screen bg-[#F0F2F5]">
-      <Header />
-      <div className="pt-[50px]">
-        <Link to="/alert" className="bg-slate-200 ">
-          Go to dashboard
-        </Link>
-      </div>
-      <CreateSupportModal />
-    </div>
-  )
+  const navigate = useNavigate()
+  useEffect(() => {
+    navigate('/alert')
+  }, [])
+  return <div className="h-screen bg-[#F0F2F5]"></div>
 }
 
 export default Home
