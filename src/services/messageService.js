@@ -10,26 +10,16 @@ export const getMessageService = async (
   limit
 ) => {
   try {
-    let url = `/${messageType}?`
-    if (deviceId) {
-      url += `device_id=${deviceId}`
-    }
-    if (start) {
-      url += `&start=${start}`
-    }
-    if (end) {
-      url += `&end=${end}`
-    }
-    if (eventType) {
-      url += `&type=${eventType}`
-    }
-    if (pagnition) {
-      url += `&page=${pagnition}`
-    }
-    if (limit) {
-      url += `&limit=${limit}`
-    }
-    const response = await apiInstances.get(url)
+    const response = await apiInstances.get(`/${messageType}?`, {
+      params: {
+        deviceId: deviceId,
+        start: start,
+        end: end,
+        eventType: eventType,
+        page: pagnition,
+        limit: limit
+      }
+    })
     return response.data
   } catch (error) {
     console.error(`Error fetching messages of type ${messageType}:`, error)

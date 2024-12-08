@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Dialog from '~/components/project/dialog'
 import { getListProjectService, getProject } from '~/services/projectServices'
-import Card from '~/components/project/card'
+import ProjectCard from '~/components/project/card'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import CreateSupportModal from '~/components/manage-support/createSupportModal'
@@ -40,8 +40,8 @@ export default function Project() {
   }, [getProjectFunc])
 
   return (
-    <div className="h-screen bg-[#F0F2F5]">
-      <div className="pt-[20px] pl-[20px]">
+    <div className="h-screen bg-[#F0F2F5] p-5">
+      <div>
         <Dialog
           data={selectedProject}
           onclose={handleCloseDialog}
@@ -49,12 +49,15 @@ export default function Project() {
         />
       </div>
 
-      <div className="flex flex-wrap">
+      <div className="grid lg:grid-cols-5 md:grid-cols-2 place-content-center place-items-center gap-4 mt-5">
         {totalProjects.map((project, index) => {
           return (
-            <div key={index} className="w-[20%] flex justify-center h-[200px] mt-[20px]">
-              <Card data={project} getProjectFunc={getProjectFunc} onclick={handleGetProject} />
-            </div>
+            <ProjectCard
+              key={index}
+              data={project}
+              getProjectFunc={getProjectFunc}
+              onclick={handleGetProject}
+            />
           )
         })}
       </div>

@@ -10,7 +10,7 @@ export default function FilterMenu({
   setSelectedDevice
 }) {
   return (
-    <div className="grid lg:grid-cols-3 lg:place-content-center lg:place-items-center mb-5 md:grid-cols-1 md:place-items-start md:gap-2 sm:gap-2">
+    <div className="grid lg:grid-cols-3 lg:place-content-center lg:place-items-center mb-5 md:grid-cols-1 md:place-items-start gap-2 ">
       <div>
         <strong className="mr-2">Devices:</strong>
         <Select
