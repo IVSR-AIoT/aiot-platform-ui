@@ -49,3 +49,8 @@ export const updatePassword = async (data) => {
     throw error
   }
 }
+
+export const getProfileService = async () => {
+  const response = await api.get('/auth')
+  return response.data
+}

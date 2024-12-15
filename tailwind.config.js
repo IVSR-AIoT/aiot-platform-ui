@@ -1,16 +1,16 @@
 module.exports = {
-    mode: 'jit', // JIT mode is enabled (optional in v3)
+  mode: 'jit',
 
-    content: ['./public/**/*.html', './src/**/*.{js,jsx,ts,tsx,vue}'], // Correct key
+  content: ['./public/**/*.html', './src/**/*.{js,jsx,ts,tsx,vue}'],
 
-    theme: {
-        extend: {
-            lineClamp: {
-                3: '3', // Custom multi-line clamping
-                5: '5', // Add 5-line clamping
-              },
-        }, // Optional, if you're extending the theme
-    },
+  theme: {
+    extend: {
+      lineClamp: {
+        3: '3',
+        5: '5'
+      }
+    }
+  },
 
-    plugins: [require('@tailwindcss/line-clamp')], // Add any plugins if needed
-};
+  plugins: [require('@tailwindcss/line-clamp')]
+}

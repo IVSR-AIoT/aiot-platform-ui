@@ -1,6 +1,7 @@
 import { useState, createContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { io } from 'socket.io-client'
+import { getProfileService } from '~/services/userService'
 
 const modalSupportContext = createContext()
 
@@ -37,6 +38,26 @@ const SidebarProvider = ({ children }) => {
   return <sidebarContext.Provider value={value}>{children}</sidebarContext.Provider>
 }
 
+const authContext = createContext()
+const AuthProvider = ({ children }) => {
+  const [profile, setProfile] = useState()
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const res = await getProfileService()
+        setProfile(res.profile)
+      } catch {
+        console.log('error')
+      }
+    }
+    getProfile()
+  }, [])
+  return <authContext.Provider value={profile}>{children}</authContext.Provider>
+}
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
+}
 ModalSupportProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
@@ -52,5 +73,7 @@ export {
   SocketContext,
   SocketProvider,
   sidebarContext,
-  SidebarProvider
+  SidebarProvider,
+  authContext,
+  AuthProvider
 }
