@@ -46,3 +46,19 @@ export const getTotalMessage = async () => {
     throw error
   }
 }
+
+export const dasboardService = async (projectId, startDate, endDate) => {
+  try {
+    const response = await apiInstances.get(`/dashboard`, {
+      params: {
+        projectId: projectId,
+        startDate: startDate,
+        endDate: endDate
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}

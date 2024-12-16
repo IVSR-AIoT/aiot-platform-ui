@@ -1,331 +1,188 @@
-import { useEffect, useState } from 'react'
-import useSWR from 'swr'
-import BarChart from '~/components/chart/barChart'
+import { useContext, useEffect, useState } from 'react'
 import FilterMenu from '~/components/chart/filter'
-
+import BarChart from '~/components/chart/barChart'
 import PieChart from '~/components/chart/pieChart'
-import { messageTypes } from '~/configs/alert'
-import {
-  countHumanAndVehicle,
-  countObjectAndSensor,
-  filterDevice,
-  handleCountStatus
-} from '~/configs/chartFunc'
-import useDebounce from '~/hook/useDebounce'
-import { deviceListService } from '~/services/deviceService'
-import { getMessageService } from '~/services/messageService'
+import { dasboardService } from '~/services/messageService'
+import { authContext } from '~/hook/useContext'
 
 export default function Chart() {
-  const [fixedListDevice, setFixedListDevice] = useState([])
-  const [listDevices, setListDevices] = useState([])
-  const [deviceOptions, setDeviceOptions] = useState([])
-  const [selectedDevice, setSelectedDevice] = useState([])
-
-  //filter device
-  useEffect(() => {
-    if (selectedDevice.length === fixedListDevice.length || selectedDevice.length === 0) {
-      setListDevices(fixedListDevice)
-    } else {
-      const data = filterDevice(fixedListDevice, selectedDevice)
-      setListDevices(data)
-    }
-  }, [selectedDevice, fixedListDevice])
-
-  // message type chart
+  const [messageDevice, setMessageDevice] = useState([])
+  const [notificationType, setNotificationType] = useState([])
+  const [statusDevice, setStatusDevice] = useState([])
+  const [typeDetection, setTypeDetection] = useState([])
+  const [projectOption, setProjectOption] = useState([])
+  const [selectedProject, setSelectedProject] = useState()
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null
   })
-  const [limit, setLimit] = useState(50)
-  const debounceValue = useDebounce(limit, 500)
-  const [typeMessageChart, setTypeMessageChart] = useState({
-    labels: messageTypes.map((item) => item.label),
-    datasets: [
-      {
-        label: 'Message Types',
-        data: [],
-        backgroundColor: ['#4caf50', '#2196f3', '#ff9800'],
-        borderColor: ['#388e3c', '#1976d2', '#f57c00'],
-        borderWidth: 1
-      }
-    ]
-  })
+  const profile = useContext(authContext)
 
-  // device status chart
-  const [statusChart, setStatusChart] = useState({
+  useEffect(() => {
+    if (profile) {
+      setProjectOption(
+        profile.project.map((project) => ({ label: project.name, value: project.id }))
+      )
+    }
+  }, [profile])
+  //fetch data
+  useEffect(() => {
+    const getDashboard = async () => {
+      try {
+        const res = await dasboardService(selectedProject, dateRange.startDate, dateRange.endDate)
+        setMessageDevice(res?.messageDevice)
+        setNotificationType(res?.notificationType)
+        setStatusDevice(res?.statusDevice)
+        setTypeDetection(res?.typeDetect)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getDashboard()
+  }, [selectedProject, dateRange.startDate, dateRange.endDate])
+
+  //status devices
+  const [statusDeviceData, setStatusDeviceData] = useState({
     labels: ['Active', 'Inactive'],
     datasets: [
       {
-        label: 'Devices status',
-        data: [],
-        backgroundColor: ['#4caf50', '#f44336'],
-        borderColor: ['#388e3c', '#d32f2f'],
-        borderWidth: 1
+        label: 'Status of devices',
+        data: [0, 0],
+        backgroundColor: ['#4CAF50', '#9E9E9E']
       }
     ]
   })
 
-  //detail notification chart
-  const [notiArr, setNotiArr] = useState([])
-  const [dataNotiChart, setDataNotiChart] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: 'Object',
-        data: [],
-        backgroundColor: ['#4caf50'],
-        borderColor: ['#388e3c'],
-        borderWidth: 1
-      },
-      {
-        label: 'Notification',
-        data: [],
-        backgroundColor: ['#f44336'],
-        borderColor: ['#d32f2f'],
-        borderWidth: 1
-      }
-    ]
-  })
   useEffect(() => {
-    const data = countObjectAndSensor(listDevices, notiArr)
-    setDataNotiChart((prev) => ({
-      ...prev,
-      labels: listDevices.map((item) => item.label),
-      datasets: [
-        {
-          label: 'Object',
-          data: data.map((item) => item.numberObject),
-          backgroundColor: ['#4caf50'],
-          borderColor: ['#388e3c'],
-          borderWidth: 1
-        },
-        {
-          label: 'Notification',
-          data: data.map((item) => item.numberSensor),
-          backgroundColor: ['#f44336'],
-          borderColor: ['#d32f2f'],
-          borderWidth: 1
-        }
-      ]
-    }))
-  }, [listDevices, notiArr])
+    if (statusDevice) {
+      setStatusDeviceData({
+        labels: ['Active', 'Inactive'],
+        datasets: [
+          {
+            label: 'Status of devices',
+            data: [statusDevice.deviceActive || 0, statusDevice.deviceInActive || 0],
+            backgroundColor: ['#4CAF50', '#9E9E9E']
+          }
+        ]
+      })
+    }
+  }, [statusDevice])
 
-  //detail object chart
-  const [objArr, setObjArr] = useState([])
-  const [objectChart, setObjectChart] = useState({
+  //message device
+  const [messageDeviceData, setMessageDeviceData] = useState({
     labels: [],
-    datasets: [
-      {
-        label: 'Human',
-        data: [],
-        backgroundColor: ['#4caf50'],
-        borderColor: ['#388e3c'],
-        borderWidth: 1
-      },
-      {
-        label: 'Vehicle',
-        data: [],
-        backgroundColor: ['#f44336'],
-        borderColor: ['#d32f2f'],
-        borderWidth: 1
-      }
-    ]
+    datasets: []
   })
   useEffect(() => {
-    const data = countHumanAndVehicle(listDevices, objArr)
-    setObjectChart((prev) => ({
-      ...prev,
-      labels: listDevices.map((item) => item.label),
+    if (messageDevice) {
+      setMessageDeviceData({
+        labels: messageDevice.map((device) => device.name),
+        datasets: [
+          {
+            label: 'Object',
+            data: messageDevice.map((device) => device.object || 0),
+            backgroundColor: '#4CAF50'
+          },
+          {
+            label: 'Sensor',
+            data: messageDevice.map((device) => device.sensor || 0),
+            backgroundColor: '#2196F3'
+          },
+          {
+            label: 'Notification',
+            data: messageDevice.map((device) => device.notification || 0),
+            backgroundColor: '#FFEB3B'
+          }
+        ]
+      })
+    }
+  }, [messageDevice])
+
+  // type detection
+  const [typeDetectionData, setTypeDetectionData] = useState({
+    labels: [],
+    datasets: []
+  })
+
+  useEffect(() => {
+    setTypeDetectionData({
+      labels: typeDetection?.map((device) => device.name),
       datasets: [
         {
           label: 'Human',
-          data: data.map((item) => item.numberHuman),
-          backgroundColor: ['#4caf50'],
-          borderColor: ['#388e3c'],
-          borderWidth: 1
+          data: typeDetection?.map((device) => device.human || 0),
+          backgroundColor: '#9C27B0'
         },
         {
           label: 'Vehicle',
-          data: data.map((item) => item.numberVehicle),
-          backgroundColor: ['#f44336'],
-          borderColor: ['#d32f2f'],
-          borderWidth: 1
+          data: typeDetection?.map((device) => device.vehicle || 0),
+          backgroundColor: '#F44336'
         }
       ]
-    }))
-  }, [listDevices, objArr])
+    })
+  }, [typeDetection])
 
-  // Fetch messages
-  const getTotalMessage = async () => {
-    try {
-      const messageCounts = await Promise.all(
-        messageTypes.map((item) =>
-          getMessageService(
-            item.value,
-            null,
-            dateRange.startDate,
-            dateRange.endDate,
-            null,
-            null,
-            debounceValue
-          ).then((res) => {
-            if (item.label === 'Notification') {
-              setNotiArr(res.data)
-            } else if (item.label === 'Object') {
-              setObjArr(res.data)
-            }
-            return res?.total || 0
-          })
-        )
-      )
+  //notification
+  const [notificationTypeData, setNotificationTypeData] = useState({
+    labels: [],
+    datasets: []
+  })
 
-      setTypeMessageChart((prev) => ({
-        ...prev,
-        datasets: prev.datasets.map((dataset) => ({
-          ...dataset,
-          data: messageCounts
-        }))
-      }))
-    } catch (error) {
-      console.error('Error fetching messages:', error)
+  useEffect(() => {
+    if (notificationType) {
+      setNotificationTypeData({
+        labels: notificationType.map((device) => device.name),
+        datasets: [
+          {
+            label: 'Object',
+            data: notificationType.map((device) => device.object || 0),
+            backgroundColor: '#4CAF50'
+          },
+          {
+            label: 'Sensor',
+            data: notificationType.map((device) => device.sensor || 0),
+            backgroundColor: '#2196F3'
+          }
+        ]
+      })
     }
-  }
-
-  // Fetch devices
-  const getTotalDevice = async () => {
-    try {
-      const res = await deviceListService()
-      const dataSet = handleCountStatus(res.data)
-      setListDevices(
-        res?.data.map((item) => ({
-          label: item.name || item.mac_address,
-          value: item.id,
-          numberObject: 0,
-          numberSensor: 0,
-          numberHuman: 0,
-          numberVehicle: 0
-        }))
-      )
-      setFixedListDevice(
-        res?.data.map((item) => ({
-          label: item.name || item.mac_address,
-          value: item.id,
-          numberObject: 0,
-          numberSensor: 0,
-          numberHuman: 0,
-          numberVehicle: 0
-        }))
-      )
-      setDeviceOptions(
-        res.data.map((item) => ({ label: item.name || item.mac_address, value: item.id }))
-      )
-      setStatusChart((prev) => ({
-        ...prev,
-        datasets: prev.datasets.map((dataset) => ({
-          ...dataset,
-          data: dataSet
-        }))
-      }))
-      return res
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useSWR(['/', dateRange.startDate, dateRange.endDate, debounceValue], getTotalMessage)
-  useSWR('/', getTotalDevice)
+  }, [notificationType])
 
   return (
-    <div className="p-5">
+    <div className="h-screen p-5">
       <FilterMenu
-        setSelectedDevice={setSelectedDevice}
+        projectOption={projectOption}
+        setSelectedProject={setSelectedProject}
         setDateRange={setDateRange}
-        limit={limit}
-        setLimit={setLimit}
-        deviceOptions={deviceOptions}
       />
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 place-content-center place-items-center gap-4">
-        <div className="w-[300px] h-[300px]">
-          <BarChart
-            data={typeMessageChart}
-            options={{
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Message type chart'
-                },
-                legend: {
-                  display: true,
-                  position: 'bottom'
-                }
-              },
-              maintainAspectRatio: false
-            }}
-          />
-        </div>
-        <div className="w-[300px] h-[300px]">
-          <BarChart
-            data={dataNotiChart}
-            options={{
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Notification type chart'
-                },
-                legend: {
-                  display: true,
-                  position: 'bottom'
-                }
-              },
-              maintainAspectRatio: false
-            }}
-          />
-        </div>
-        <div className="w-[300px] h-[300px]">
-          <BarChart
-            data={objectChart}
-            options={{
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Object type chart'
-                },
-                legend: {
-                  display: true,
-                  position: 'bottom'
-                }
-              },
-              responsive: true,
-              scales: {
-                x: {
-                  stacked: true
-                },
-                y: {
-                  stacked: true
-                }
-              },
-              maintainAspectRatio: false
-            }}
-          />
-        </div>
-        <div className="w-[600px] h-[300px]">
-          <PieChart
-            data={statusChart}
-            options={{
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Devices status chart'
-                },
-                legend: {
-                  display: true,
-                  position: 'bottom'
-                }
-              },
-              maintainAspectRatio: false
-            }}
-          />
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        <fieldset className="p-4 border-2 rounded-md">
+          <legend className="text-lg font-semibold">Device Status</legend>
+          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
+            <PieChart data={statusDeviceData} />
+          </div>
+        </fieldset>
+
+        <fieldset className="p-4 border-2 rounded-md">
+          <legend className="text-lg font-semibold">Message Device Data</legend>
+          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
+            <BarChart data={messageDeviceData} />
+          </div>
+        </fieldset>
+
+        <fieldset className="p-4 border-2 rounded-md">
+          <legend className="text-lg font-semibold">Type Detection Data</legend>
+          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
+            <BarChart data={typeDetectionData} />
+          </div>
+        </fieldset>
+
+        <fieldset className="p-4 border-2 rounded-md">
+          <legend className="text-lg font-semibold">Notification Type Data</legend>
+          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
+            <BarChart data={notificationTypeData} />
+          </div>
+        </fieldset>
       </div>
     </div>
   )

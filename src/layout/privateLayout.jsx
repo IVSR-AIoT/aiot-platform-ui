@@ -2,7 +2,6 @@ import { useEffect, useRef, useContext } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { isAuthentication } from '~/hook/useAuth'
 import Header from '~/components/header'
-import Footer from '~/components/footer'
 import Sidebar from '~/components/sidebar'
 import { message } from 'antd'
 import PropTypes from 'prop-types'
@@ -35,7 +34,6 @@ export default function PrivateRoute({ children }) {
         {context.isSidebarOpen && <Sidebar className="w-[500px] bg-gray-800 overflow-y-auto" />}
         <div ref={contentRef} className="w-full h-full overflow-y-auto shadow-xl">
           {children}
-          <Footer />
         </div>
       </div>
     </div>
