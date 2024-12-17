@@ -1,8 +1,7 @@
-import { Button, Image, List } from 'antd'
+import { Button, List } from 'antd'
 import PropTypes from 'prop-types'
 import { formatDate } from '~/configs/utils'
 import Map from '../map'
-import { useEffect, useState } from 'react'
 
 export default function MessageList({
   data,
@@ -10,24 +9,7 @@ export default function MessageList({
   setDetailMessage,
   messageType = 'notification'
 }) {
-  const [previewImg, setPreviewImg] = useState([])
-
-  useEffect(() => {
-    if (!data) return
-
-    const list = []
-    data.forEach((item) => {
-      if (Array.isArray(item.object_list)) {
-        item.object_list.some((object) => {
-          if (object.image_URL && list.length < 2) {
-            list.push(object.image_URL)
-          }
-          return list.length >= 2
-        })
-      }
-    })
-    setPreviewImg(list)
-  }, [data])
+  //const [previewImg, setPreviewImg] = useState()
 
   const getDescription = (type, item) => {
     switch (type) {
@@ -61,6 +43,9 @@ export default function MessageList({
               >
                 Detail
               </Button>,
+              <Button type="primary" key="watch-video">
+                Watch video
+              </Button>,
               <Button type="primary" ghost key="accept">
                 Accept
               </Button>,
@@ -69,28 +54,8 @@ export default function MessageList({
               </Button>
             ]}
             extra={
-              <div className="flex gap-4 flex-wrap">
-                {messageType !== 'sensor' && previewImg.length > 0 && (
-                  <Image.PreviewGroup
-                    preview={{
-                      onChange: (current, prev) =>
-                        console.log(`current index: ${current}, prev index: ${prev}`)
-                    }}
-                  >
-                    {previewImg.map((url, index) => (
-                      <Image
-                        key={index}
-                        width={200}
-                        height={200}
-                        style={{ objectFit: 'cover' }}
-                        src={url}
-                      />
-                    ))}
-                  </Image.PreviewGroup>
-                )}
-                <div className="w-[300px]">
-                  <Map />
-                </div>
+              <div className="w-[300px]">
+                <Map />
               </div>
             }
           >
