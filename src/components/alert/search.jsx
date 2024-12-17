@@ -44,7 +44,7 @@ export default function FilterMenu({
   }, [profile, selectedProject])
 
   return (
-    <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 place-content-center place-items-center mb-[20px]">
+    <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 place-content-center  mb-[20px]">
       {!isUser() ? (
         <Segmented
           className="w-[300px]"

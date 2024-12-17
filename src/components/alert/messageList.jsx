@@ -1,6 +1,7 @@
-import { Button, List } from 'antd'
+import { Button, Image, List } from 'antd'
 import PropTypes from 'prop-types'
 import { formatDate } from '~/configs/utils'
+import { useEffect, useState } from 'react'
 import Map from '../map'
 
 export default function MessageList({
@@ -9,7 +10,15 @@ export default function MessageList({
   setDetailMessage,
   messageType = 'notification'
 }) {
-  //const [previewImg, setPreviewImg] = useState()
+  const [previewImg, setPreviewImg] = useState()
+  useEffect(() => {
+    if (data && messageType === 'object') {
+      const listImg = data[0]?.object_list?.map((object) => object.image_URL)
+      setPreviewImg(listImg)
+    } else {
+      setPreviewImg(null)
+    }
+  }, [data, messageType])
 
   const getDescription = (type, item) => {
     switch (type) {
@@ -26,7 +35,6 @@ export default function MessageList({
     <div className="min-h-[100vh]">
       <List
         className="w-full"
-        locale={{ emptyText: 'No messages available' }}
         itemLayout="vertical"
         dataSource={data}
         renderItem={(item) => (
@@ -54,7 +62,17 @@ export default function MessageList({
               </Button>
             ]}
             extra={
-              <div className="w-[300px]">
+              <div
+                className={` ${messageType === 'object' ? 'w-[600px] flex justify-between' : 'w-[300px'}`}
+              >
+                {messageType === 'object' && (
+                  <Image
+                    width={200}
+                    className="rounded-lg shadow object-cover"
+                    src={previewImg}
+                    alt="IMAGE ERROR"
+                  />
+                )}
                 <Map />
               </div>
             }

@@ -13,11 +13,14 @@ function Alert() {
     sensor: [],
     notification: []
   })
-
+  const [totalPage, setTotalPage] = useState({
+    object: 0,
+    sensor: 0,
+    notification: 0
+  })
   const [loading, setLoading] = useState(false)
   const [messageType, setMessageType] = useState(messageConfigs[0])
   const [data, setData] = useState([])
-  const [totalPage, setTotalPage] = useState()
   const [pagination, setPagination] = useState(1)
   const [openModal, setOpenModal] = useState(false)
   const [detailMessage, setDetailMessage] = useState()
@@ -44,9 +47,13 @@ function Alert() {
           acc[type] = data
           return acc
         }, {})
-        setMessages(updatedMessages)
 
-        setTotalPage(results.find((res) => res.type === messageType)?.total || 0)
+        setMessages(updatedMessages)
+        const updatedTotalPage = results.reduce((acc, { type, total }) => {
+          acc[type] = total
+          return acc
+        }, {})
+        setTotalPage(updatedTotalPage)
       } catch {
         message.error('Error fetching messages.')
       } finally {
@@ -75,7 +82,7 @@ function Alert() {
           eventType,
           pagination
         )
-        setTotalPage(res.total)
+
         setData(res.data)
       } catch {
         message.error('Failed to retrieve messages. Please try again.')
@@ -127,7 +134,7 @@ function Alert() {
         <Pagination
           align="center"
           defaultCurrent={1}
-          total={totalPage}
+          total={totalPage[`${messageType}`]}
           pageSize={5}
           onChange={(value) => {
             setPagination(value)
