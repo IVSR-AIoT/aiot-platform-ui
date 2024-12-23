@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import PropTypes from 'prop-types'
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -10,18 +11,23 @@ const DefaultIcon = L.icon({
 })
 
 L.Marker.prototype.options.icon = DefaultIcon
-export default function Map() {
+export default function Map({ lon, lat }) {
   return (
     <MapContainer
-      center={[21.005453, 105.8451935]}
+      center={[lat, lon]}
       zoom={13}
       scrollWheelZoom={true}
       className="w-[300px] h-[200px] rounded-lg"
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <Marker position={[21.005453, 105.8451935]}>
+      <Marker position={[lat, lon]}>
         <Popup>ROOM E-722</Popup>
       </Marker>
     </MapContainer>
   )
+}
+
+Map.propTypes = {
+  lon: PropTypes.number.isRequired,
+  lat: PropTypes.number.isRequired
 }

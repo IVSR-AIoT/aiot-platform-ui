@@ -1,11 +1,14 @@
 import { Pagination, Spin, message } from 'antd'
 import { useState, useEffect } from 'react'
 import CreateSupportModal from '~/components/manage-support/createSupportModal'
-import ModalListObject from '~/components/alert/modalListObject'
+/* import ModalListObject from '~/components/alert/modalListObject' */
 import FilterMenu from '~/components/alert/search'
-import MessageList from '~/components/alert/messageList'
-import { messageConfigs } from '~/configs/alert'
+import { messageConfigs, messageTypes } from '~/configs/alert'
 import { getMessageService } from '~/services/messageService'
+
+import { TabPanel, TabView } from 'primereact/tabview'
+import MessageItem from '~/components/alert/messageItem'
+import { isUser } from '~/hook/useAuth'
 
 function Alert() {
   const [messages, setMessages] = useState({
@@ -18,12 +21,13 @@ function Alert() {
     sensor: 0,
     notification: 0
   })
+  const [activeIndex, setActiveIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [messageType, setMessageType] = useState(messageConfigs[0])
   const [data, setData] = useState([])
   const [pagination, setPagination] = useState(1)
-  const [openModal, setOpenModal] = useState(false)
-  const [detailMessage, setDetailMessage] = useState()
+  /*   const [openModal, setOpenModal] = useState(false) */
+
   const [selectedDevice, setSelectedDevice] = useState()
   const [selectedProject, setSelectedProject] = useState()
   const [eventType, setEventType] = useState()
@@ -116,20 +120,31 @@ function Alert() {
           setSelectedDevice={setSelectedDevice}
           setSelectedProject={setSelectedProject}
         />
+
         <CreateSupportModal />
-        <MessageList
-          data={data}
-          openModal={openModal}
-          setOpenModal={setOpenModal}
-          setDetailMessage={setDetailMessage}
-          messageType={messageType}
-        />
-        <ModalListObject
+        {isUser() ? null : (
+          <TabView
+            activeIndex={activeIndex}
+            onTabChange={(e) => {
+              setActiveIndex(e.index)
+              setMessageType(messageTypes[e.index].value)
+            }}
+          >
+            {messageTypes.map((item) => (
+              <TabPanel key={item.value} header={item.label} />
+            ))}
+          </TabView>
+        )}
+        {data.map((item, index) => (
+          <MessageItem key={index} data={item} messageType={messageType} />
+        ))}
+
+        {/*   <ModalListObject
           openModal={openModal}
           setOpenModal={setOpenModal}
           detailMessage={detailMessage}
           messageType={messageType}
-        />
+        /> */}
 
         <Pagination
           align="center"

@@ -1,8 +1,8 @@
 export const messageConfigs = ['notification', 'object', 'sensor']
 export const messageTypes = [
-  { label: 'Object', value: 'object' },
-  { label: 'Sensor', value: 'sensor' },
-  { label: 'Notification', value: 'notification' }
+  { label: 'Notification', value: 'notification', icon: 'pi pi-bell' },
+  { label: 'Object', value: 'object', icon: 'pi pi-bell' },
+  { label: 'Sensor', value: 'sensor', icon: 'pi pi-bell' }
 ]
 export const eventType = [
   { label: 'All', value: null },
