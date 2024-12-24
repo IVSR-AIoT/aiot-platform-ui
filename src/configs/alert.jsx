@@ -4,11 +4,12 @@ export const messageTypes = [
   { label: 'Object', value: 'object', icon: 'pi pi-bell' },
   { label: 'Sensor', value: 'sensor', icon: 'pi pi-bell' }
 ]
-export const eventType = [
-  { label: 'All', value: null },
-  { label: 'Human', value: 'human' },
-  { label: 'Vehicle', value: 'vehicle' }
+
+export const eventTypeOptions = [
+  { name: 'Human', code: 'human' },
+  { name: 'Vehicle', code: 'vehicle' }
 ]
+
 export const columns = [
   {
     title: 'Sensor Name',

@@ -21,6 +21,7 @@ function Alert() {
     sensor: 0,
     notification: 0
   })
+  const [total, setTotal] = useState()
   const [activeIndex, setActiveIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [messageType, setMessageType] = useState(messageConfigs[0])
@@ -30,11 +31,8 @@ function Alert() {
 
   const [selectedDevice, setSelectedDevice] = useState()
   const [selectedProject, setSelectedProject] = useState()
-  const [eventType, setEventType] = useState()
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null
-  })
+  const [selectedType, setSelectedType] = useState(null)
+  const [dates, setDates] = useState()
 
   useEffect(() => {
     const fetchMessage = async () => {
@@ -71,40 +69,37 @@ function Alert() {
   useEffect(() => {
     if (messages && pagination === 1) {
       setData(messages[`${messageType}`])
+      setTotal(totalPage[`${messageType}`])
     }
   }, [messages, messageType, pagination])
 
   useEffect(() => {
     const getMessage = async () => {
       setLoading(true)
+      const [start, end] = dates || [null, null]
       try {
         const res = await getMessageService(
           messageType,
-          selectedDevice,
-          dateRange.startDate,
-          dateRange.endDate,
-          eventType,
+          selectedProject?.code,
+          selectedDevice?.code,
+          start,
+          end,
+          selectedType?.code,
           pagination
         )
 
         setData(res.data)
+        setTotal(res.total)
       } catch {
         message.error('Failed to retrieve messages. Please try again.')
       } finally {
         setLoading(false)
       }
     }
-    if (
-      selectedProject ||
-      selectedDevice ||
-      dateRange.startDate ||
-      dateRange.endDate ||
-      eventType ||
-      pagination !== 1
-    ) {
+    if (selectedProject || selectedDevice || dates || selectedType || pagination !== 1) {
       getMessage()
     }
-  }, [selectedProject, selectedDevice, messageType, dateRange, eventType, pagination])
+  }, [selectedProject, selectedDevice, messageType, dates, selectedType, pagination])
 
   return (
     <Spin spinning={loading}>
@@ -113,9 +108,11 @@ function Alert() {
           messageType={messageType}
           selectedDevice={selectedDevice}
           selectedProject={selectedProject}
+          selectedType={selectedType}
           setMessageType={setMessageType}
-          setEventType={setEventType}
-          setDateRange={setDateRange}
+          setSelectedType={setSelectedType}
+          setDates={setDates}
+          dates={dates}
           setTotalPage={setTotalPage}
           setSelectedDevice={setSelectedDevice}
           setSelectedProject={setSelectedProject}
@@ -149,7 +146,7 @@ function Alert() {
         <Pagination
           align="center"
           defaultCurrent={1}
-          total={totalPage[`${messageType}`]}
+          total={total}
           pageSize={5}
           onChange={(value) => {
             setPagination(value)

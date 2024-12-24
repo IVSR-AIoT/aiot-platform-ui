@@ -2,6 +2,7 @@ import apiInstances from './api'
 
 export const getMessageService = async (
   messageType,
+  projectId,
   deviceId,
   start,
   end,
@@ -11,10 +12,11 @@ export const getMessageService = async (
   try {
     const response = await apiInstances.get(`/${messageType}?`, {
       params: {
-        deviceId: deviceId,
+        project_id: projectId,
+        device_id: deviceId,
         start: start,
         end: end,
-        eventType: eventType,
+        type: eventType,
         page: pagnition,
         limit: 5
       }

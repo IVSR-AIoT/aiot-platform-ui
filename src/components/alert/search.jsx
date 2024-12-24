@@ -1,23 +1,27 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect, useContext } from 'react'
 import { authContext } from '~/hook/useContext'
-import { eventType } from '~/configs/alert'
+
 import { FloatLabel } from 'primereact/floatlabel'
 import { Dropdown } from 'primereact/dropdown'
 import { Calendar } from 'primereact/calendar'
+import { eventTypeOptions } from '~/configs/alert'
 
 export default function FilterMenu({
   messageType,
+  setDates,
+  dates,
+  selectedType,
   selectedProject,
   selectedDevice,
   setSelectedDevice,
   setSelectedProject,
-  setEventType
+  setSelectedType
 }) {
   const [projectOptions, setProjectOptions] = useState([])
   const [deviceOptions, setDeviceOptions] = useState([])
   const [profile, setProfile] = useState()
-  const [date, setDate] = useState('')
+
   const profileContext = useContext(authContext)
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function FilterMenu({
     if (selectedProject) {
       const listDevice = profile?.project
         .find((item) => item.id === selectedProject.code)
-        .device.map((item) => ({ name: item.name, code: item.id }))
+        .device.map((item) => ({ name: item?.name, code: item?.id }))
 
       setDeviceOptions(listDevice)
     }
@@ -66,9 +70,7 @@ export default function FilterMenu({
         <Dropdown
           showClear
           value={selectedDevice}
-          onChange={(e) => {
-            setSelectedDevice(e.value)
-          }}
+          onChange={(e) => setSelectedDevice(e.value)}
           options={deviceOptions}
           optionLabel="name"
           className="w-full border"
@@ -78,45 +80,42 @@ export default function FilterMenu({
 
       <FloatLabel>
         <Calendar
-          inputClassName="pl-3"
-          readOnlyInput
-          value={date}
+          value={dates}
           showButtonBar
           selectionMode="range"
-          onChange={(e) => {
-            setDate(e.value)
-          }}
+          onChange={(e) => setDates(e.value)}
           dateFormat="yy-mm-dd"
-          className="w-full h-full border rounded"
+          className="w-full rounded"
         />
         <label>Select date</label>
       </FloatLabel>
 
-      {messageType === 'object' ? (
+      {messageType === 'object' && (
         <FloatLabel>
           <Dropdown
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.value)}
+            options={eventTypeOptions}
             optionLabel="name"
-            optionValue="code"
-            options={eventType}
-            onChange={(value) => {
-              setEventType(value)
-            }}
+            showClear
             className="w-full border"
           />
-          <label>Select type</label>
+          <label>Select Type</label>
         </FloatLabel>
-      ) : null}
+      )}
     </div>
   )
 }
 
 FilterMenu.propTypes = {
   messageType: PropTypes.string,
-  setDateRange: PropTypes.func.isRequired,
-  setEventType: PropTypes.func.isRequired,
+  selectedType: PropTypes.object,
+  dates: PropTypes.object,
+  setDates: PropTypes.func.isRequired,
+  setSelectedType: PropTypes.func.isRequired,
   setMessageType: PropTypes.func.isRequired,
   setSelectedDevice: PropTypes.func.isRequired,
   setSelectedProject: PropTypes.func.isRequired,
-  selectedDevice: PropTypes.number,
-  selectedProject: PropTypes.number
+  selectedDevice: PropTypes.object,
+  selectedProject: PropTypes.object
 }
