@@ -1,100 +1,121 @@
-import { Segmented, Select, DatePicker, InputNumber } from 'antd'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { authContext } from '~/hook/useContext'
 
-import { messageConfigs } from '~/configs/alert'
-import { isUser } from '~/hook/useAuth'
-import { type } from '~/configs/alert'
+import { FloatLabel } from 'primereact/floatlabel'
+import { Dropdown } from 'primereact/dropdown'
+import { Calendar } from 'primereact/calendar'
+import { eventTypeOptions } from '~/configs/alert'
 
 export default function FilterMenu({
-  handleAssignDevice,
-  setEventType,
-  setDateRange,
-  eventType,
-  setMessageType,
-  setLimit,
-  limit,
-  deviceOptions,
-  projectOptions
+  messageType,
+  setDates,
+  dates,
+  selectedType,
+  selectedProject,
+  selectedDevice,
+  setSelectedDevice,
+  setSelectedProject,
+  setSelectedType
 }) {
-  const { RangePicker } = DatePicker
-  const [selectedDevice, setSelectedDevice] = useState()
-  const [selectedProject, setSelectedProject] = useState()
+  const [projectOptions, setProjectOptions] = useState([])
+  const [deviceOptions, setDeviceOptions] = useState([])
+  const [profile, setProfile] = useState()
+
+  const profileContext = useContext(authContext)
+
+  useEffect(() => {
+    setProfile(profileContext)
+  }, [profileContext])
+
+  // set project options
+  useEffect(() => {
+    const listOptions = profile?.project.map((project) => ({
+      name: project?.name,
+      code: project?.id
+    }))
+    setProjectOptions(listOptions)
+  }, [profile])
+
+  //set device options
+  useEffect(() => {
+    if (selectedProject) {
+      const listDevice = profile?.project
+        .find((item) => item.id === selectedProject.code)
+        .device.map((item) => ({ name: item?.name, code: item?.id }))
+
+      setDeviceOptions(listDevice)
+    }
+  }, [profile, selectedProject])
 
   return (
-    <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-3 place-content-center place-items-center mb-[20px]">
-      <div className="flex items-center">
-        <strong>Select Project:</strong>
-        <Select
-          options={projectOptions}
-          className="w-[180px] ml-1"
-          placeholder="Select Project"
-          onChange={(value) => {
-            setSelectedProject(value)
-            setSelectedDevice(null)
-            handleAssignDevice(value)
-          }}
+    <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 mt-3 mb-[20px]">
+      <FloatLabel>
+        <Dropdown
+          showClear
           value={selectedProject}
-          allowClear
-        />
-      </div>
-      <div className="flex items-center">
-        <strong>Select Device:</strong>
-        <Select
-          options={deviceOptions}
-          className="w-[180px] ml-1"
-          placeholder="Select type"
-          allowClear
-          onChange={(value) => setSelectedDevice(value)}
-          value={selectedDevice}
-        />
-      </div>
-      <RangePicker
-        style={{ width: 220 }}
-        onChange={(_, value) => setDateRange({ startDate: value[0], endDate: value[1] })}
-      />
-      <Select
-        className="w-[180px]"
-        placeholder="Select event type"
-        allowClear
-        options={type}
-        value={eventType}
-        onChange={(value) => setEventType(value)}
-      />
-
-      {!isUser() ? (
-        <Segmented
-          options={messageConfigs}
-          onChange={(value) => {
-            setMessageType(value)
-            setEventType(null)
+          onChange={(e) => {
+            setSelectedDevice(null)
+            setDeviceOptions([])
+            setSelectedProject(e.value)
           }}
-          block
-          className="w-[300px]"
+          options={projectOptions}
+          optionLabel="name"
+          className="w-full border"
         />
-      ) : null}
-      <div>
-        <strong>Limit:</strong>
-        <InputNumber className="ml-1" defaultValue={limit} onChange={(value) => setLimit(value)} />
-      </div>
+        <label>Select Project</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <Dropdown
+          showClear
+          value={selectedDevice}
+          onChange={(e) => setSelectedDevice(e.value)}
+          options={deviceOptions}
+          optionLabel="name"
+          className="w-full border"
+        />
+        <label>Select device</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <Calendar
+          value={dates}
+          showButtonBar
+          selectionMode="range"
+          onChange={(e) => setDates(e.value)}
+          dateFormat="yy-mm-dd"
+          className="w-full rounded"
+        />
+        <label>Select date</label>
+      </FloatLabel>
+
+      {messageType === 'object' && (
+        <FloatLabel>
+          <Dropdown
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.value)}
+            options={eventTypeOptions}
+            optionLabel="name"
+            showClear
+            className="w-full border"
+          />
+          <label>Select Type</label>
+        </FloatLabel>
+      )}
     </div>
   )
 }
 
 FilterMenu.propTypes = {
-  deviceOptions: PropTypes.array,
-  handleAssignDevice: PropTypes.func,
-  setDateRange: PropTypes.func,
-  setEventType: PropTypes.func,
-  loading: PropTypes.bool,
-  setLoading: PropTypes.func,
-  setData: PropTypes.func.isRequired,
-  setTotalPage: PropTypes.func.isRequired,
-  pagination: PropTypes.number,
   messageType: PropTypes.string,
-  setMessageType: PropTypes.func,
-  limit: PropTypes.number,
-  setLimit: PropTypes.func,
-  eventType: PropTypes.string,
-  projectOptions: PropTypes.array
+  selectedType: PropTypes.object,
+  dates: PropTypes.object,
+  setDates: PropTypes.func.isRequired,
+  setSelectedType: PropTypes.func.isRequired,
+  setMessageType: PropTypes.func.isRequired,
+  setSelectedDevice: PropTypes.func.isRequired,
+  setSelectedProject: PropTypes.func.isRequired,
+  selectedDevice: PropTypes.object,
+  selectedProject: PropTypes.object
 }

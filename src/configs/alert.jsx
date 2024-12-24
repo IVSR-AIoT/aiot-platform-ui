@@ -1,14 +1,15 @@
-export const messageConfigs = ['object', 'sensor', 'notification']
+export const messageConfigs = ['notification', 'object', 'sensor']
 export const messageTypes = [
-  { label: 'Object', value: 'object' },
-  { label: 'Sensor', value: 'sensor' },
-  { label: 'Notification', value: 'notification' }
+  { label: 'Notification', value: 'notification', icon: 'pi pi-bell' },
+  { label: 'Object', value: 'object', icon: 'pi pi-bell' },
+  { label: 'Sensor', value: 'sensor', icon: 'pi pi-bell' }
 ]
-export const type = [
-  { label: 'All', value: 'all' },
-  { label: 'Human', value: 'human' },
-  { label: 'Vehicle', value: 'vehicle' }
+
+export const eventTypeOptions = [
+  { name: 'Human', code: 'human' },
+  { name: 'Vehicle', code: 'vehicle' }
 ]
+
 export const columns = [
   {
     title: 'Sensor Name',

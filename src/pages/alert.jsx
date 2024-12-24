@@ -1,159 +1,153 @@
 import { Pagination, Spin, message } from 'antd'
 import { useState, useEffect } from 'react'
 import CreateSupportModal from '~/components/manage-support/createSupportModal'
-import ModalListObject from '~/components/alert/modalListObject'
+/* import ModalListObject from '~/components/alert/modalListObject' */
 import FilterMenu from '~/components/alert/search'
-import MessageList from '~/components/alert/messageList'
-import { messageConfigs } from '~/configs/alert'
-import { listProjectAndDevice } from '~/services/projectServices'
+import { messageConfigs, messageTypes } from '~/configs/alert'
 import { getMessageService } from '~/services/messageService'
+
+import { TabPanel, TabView } from 'primereact/tabview'
+import MessageItem from '~/components/alert/messageItem'
 import { isUser } from '~/hook/useAuth'
-import useDebounce from '~/hook/useDebounce'
 
 function Alert() {
-  const [projectAndDevice, setProjectAndDevice] = useState([])
-  const [projectOptions, setProjectOptions] = useState([])
-  const [deviceOptions, setDeviceOptions] = useState([])
+  const [messages, setMessages] = useState({
+    object: [],
+    sensor: [],
+    notification: []
+  })
+  const [totalPage, setTotalPage] = useState({
+    object: 0,
+    sensor: 0,
+    notification: 0
+  })
+  const [total, setTotal] = useState()
+  const [activeIndex, setActiveIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [messageType, setMessageType] = useState(messageConfigs[0])
   const [data, setData] = useState([])
-  const [totalPage, setTotalPage] = useState()
   const [pagination, setPagination] = useState(1)
-  const [openModal, setOpenModal] = useState(false)
-  const [detailMessage, setDetailMessage] = useState()
-  const [limit, setLimit] = useState(5)
+  /*   const [openModal, setOpenModal] = useState(false) */
+
   const [selectedDevice, setSelectedDevice] = useState()
   const [selectedProject, setSelectedProject] = useState()
-  const [eventType, setEventType] = useState()
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null
-  })
+  const [selectedType, setSelectedType] = useState(null)
+  const [dates, setDates] = useState()
 
-  //fetch device
-  const getListProjectAndDevice = async () => {
-    setLoading(true)
-    try {
-      const res = await listProjectAndDevice()
-      setProjectAndDevice(res)
-      const projectOptions = res.map((item) => ({ label: item.name, value: item.id }))
-      setProjectOptions(projectOptions)
-    } catch {
-      message.error('Error fetching projects and devices.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleAssignDevice = (projectId) => {
-    const project = projectAndDevice.find((item) => item.id === projectId)
-    const device = project?.device.map((item) => ({ label: item.name, value: item.id }))
-    setDeviceOptions(device)
-  }
-
-  //fetch message
-  const limitDebounce = useDebounce(limit, 500)
-  const getMessage = async () => {
-    if (!selectedProject || !selectedDevice || !messageType) {
-      message.warning('Please select a project, device, and message type.')
-      return
-    }
-    if (isUser()) {
-      setMessageType('notification')
-    }
-    setLoading(true)
-    try {
-      const res = await getMessageService(
-        messageType,
-        selectedDevice,
-        dateRange.startDate,
-        dateRange.endDate,
-        eventType,
-        pagination,
-        limitDebounce
-      )
-      setTotalPage(res.total)
-      setData(res.data)
-    } catch (error) {
-      console.error(error)
-      message.error('Failed to retrieve messages. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  //call function
   useEffect(() => {
-    getListProjectAndDevice()
+    const fetchMessage = async () => {
+      setLoading(true)
+      try {
+        const results = await Promise.all(
+          messageConfigs.map(async (type) => {
+            const response = await getMessageService(type)
+            return { type, data: response.data, total: response.total }
+          })
+        )
+
+        const updatedMessages = results.reduce((acc, { type, data }) => {
+          acc[type] = data
+          return acc
+        }, {})
+
+        setMessages(updatedMessages)
+        const updatedTotalPage = results.reduce((acc, { type, total }) => {
+          acc[type] = total
+          return acc
+        }, {})
+        setTotalPage(updatedTotalPage)
+      } catch {
+        message.error('Error fetching messages.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMessage()
   }, [])
 
   useEffect(() => {
-    if (projectOptions.length > 0) {
-      const firstProject = projectOptions[0].value
-      setSelectedProject(firstProject)
-      handleAssignDevice(firstProject)
+    if (messages && pagination === 1) {
+      setData(messages[`${messageType}`])
+      setTotal(totalPage[`${messageType}`])
     }
-  }, [projectOptions])
+  }, [messages, messageType, pagination])
 
   useEffect(() => {
-    if (deviceOptions?.length > 0) {
-      const firstDevice = deviceOptions[0].value
-      setSelectedDevice(firstDevice)
-    }
-  }, [deviceOptions])
+    const getMessage = async () => {
+      setLoading(true)
+      const [start, end] = dates || [null, null]
+      try {
+        const res = await getMessageService(
+          messageType,
+          selectedProject?.code,
+          selectedDevice?.code,
+          start,
+          end,
+          selectedType?.code,
+          pagination
+        )
 
-  useEffect(() => {
-    setPagination(1)
-    if (selectedDevice) {
+        setData(res.data)
+        setTotal(res.total)
+      } catch {
+        message.error('Failed to retrieve messages. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (selectedProject || selectedDevice || dates || selectedType || pagination !== 1) {
       getMessage()
-    } else {
-      setData([])
     }
-  }, [
-    selectedProject,
-    selectedDevice,
-    messageType,
-    dateRange,
-    eventType,
-    pagination,
-    limitDebounce
-  ])
+  }, [selectedProject, selectedDevice, messageType, dates, selectedType, pagination])
 
   return (
     <Spin spinning={loading}>
-      <div className="min-h-screen bg-[#F0F2F5] p-5">
+      <div className="min-h-screen bg-[#fff] p-5">
         <FilterMenu
-          deviceOptions={deviceOptions}
-          handleAssignDevice={handleAssignDevice}
-          setEventType={setEventType}
-          setDateRange={setDateRange}
-          setLimit={setLimit}
-          limit={limit}
-          setTotalPage={setTotalPage}
           messageType={messageType}
+          selectedDevice={selectedDevice}
+          selectedProject={selectedProject}
+          selectedType={selectedType}
           setMessageType={setMessageType}
-          projectOptions={projectOptions}
+          setSelectedType={setSelectedType}
+          setDates={setDates}
+          dates={dates}
+          setTotalPage={setTotalPage}
+          setSelectedDevice={setSelectedDevice}
+          setSelectedProject={setSelectedProject}
         />
+
         <CreateSupportModal />
-        <MessageList
-          data={data}
-          openModal={openModal}
-          setOpenModal={setOpenModal}
-          setDetailMessage={setDetailMessage}
-          messageType={messageType}
-        />
-        <ModalListObject
+        {isUser() ? null : (
+          <TabView
+            activeIndex={activeIndex}
+            onTabChange={(e) => {
+              setActiveIndex(e.index)
+              setMessageType(messageTypes[e.index].value)
+            }}
+          >
+            {messageTypes.map((item) => (
+              <TabPanel key={item.value} header={item.label} />
+            ))}
+          </TabView>
+        )}
+        {data.map((item, index) => (
+          <MessageItem key={index} data={item} messageType={messageType} />
+        ))}
+
+        {/*   <ModalListObject
           openModal={openModal}
           setOpenModal={setOpenModal}
           detailMessage={detailMessage}
           messageType={messageType}
-        />
+        /> */}
 
         <Pagination
           align="center"
           defaultCurrent={1}
-          total={totalPage}
-          pageSize={limit}
+          total={total}
+          pageSize={5}
           onChange={(value) => {
             setPagination(value)
           }}

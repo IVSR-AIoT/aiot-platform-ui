@@ -1,6 +1,10 @@
+import './index.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
+import { PrimeReactProvider } from 'primereact/api'
+import 'primereact/resources/themes/saga-blue/theme.css'
+import 'primereact/resources/primereact.min.css'
+import 'primeicons/primeicons.css'
 import App from './App'
 import {
   AuthProvider,
@@ -11,13 +15,15 @@ import {
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <AuthProvider>
-    <ModalSupportProvider>
-      <SocketProvider>
-        <SidebarProvider>
-          <App />
-        </SidebarProvider>
-      </SocketProvider>
-    </ModalSupportProvider>
-  </AuthProvider>
+  <PrimeReactProvider>
+    <AuthProvider>
+      <ModalSupportProvider>
+        <SocketProvider>
+          <SidebarProvider>
+            <App />
+          </SidebarProvider>
+        </SocketProvider>
+      </ModalSupportProvider>
+    </AuthProvider>
+  </PrimeReactProvider>
 )
