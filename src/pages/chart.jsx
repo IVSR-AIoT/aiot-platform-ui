@@ -1,21 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
 import FilterMenu from '~/components/chart/filter'
-import BarChart from '~/components/chart/barChart'
-import PieChart from '~/components/chart/pieChart'
 import { dasboardService } from '~/services/messageService'
 import { authContext } from '~/hook/useContext'
+import { Chart } from 'primereact/chart'
+import { Fieldset } from 'primereact/fieldset'
+import { Divider } from 'primereact/divider'
 
-export default function Chart() {
+export default function ChartPage() {
   const [messageDevice, setMessageDevice] = useState([])
   const [notificationType, setNotificationType] = useState([])
   const [statusDevice, setStatusDevice] = useState([])
   const [typeDetection, setTypeDetection] = useState([])
   const [projectOption, setProjectOption] = useState([])
   const [selectedProject, setSelectedProject] = useState()
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null
-  })
+  const [dateRange, setDateRange] = useState()
   const profile = useContext(authContext)
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function Chart() {
   useEffect(() => {
     const getDashboard = async () => {
       try {
-        const res = await dasboardService(selectedProject, dateRange.startDate, dateRange.endDate)
+        const res = await dasboardService(selectedProject, dateRange, dateRange)
         setMessageDevice(res?.messageDevice)
         setNotificationType(res?.notificationType)
         setStatusDevice(res?.statusDevice)
@@ -39,7 +37,7 @@ export default function Chart() {
       }
     }
     getDashboard()
-  }, [selectedProject, dateRange.startDate, dateRange.endDate])
+  }, [selectedProject, dateRange, dateRange])
 
   //status devices
   const [statusDeviceData, setStatusDeviceData] = useState({
@@ -149,40 +147,30 @@ export default function Chart() {
   }, [notificationType])
 
   return (
-    <div className="h-screen p-5">
+    <div className="h-screen p-5 my-3">
       <FilterMenu
         projectOption={projectOption}
+        dateRange={dateRange}
+        selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
         setDateRange={setDateRange}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        <fieldset className="p-4 border-2 rounded-md">
-          <legend className="text-lg font-semibold">Device Status</legend>
-          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
-            <PieChart data={statusDeviceData} />
-          </div>
-        </fieldset>
+      <Divider />
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-content-center place-items-center">
+        <Fieldset legend="Device Status Chart" className="w-[300px]">
+          <Chart type="pie" data={statusDeviceData} />
+        </Fieldset>
 
-        <fieldset className="p-4 border-2 rounded-md">
-          <legend className="text-lg font-semibold">Message Device Data</legend>
-          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
-            <BarChart data={messageDeviceData} />
-          </div>
-        </fieldset>
+        <Fieldset legend="Message Device Chart" className="w-[300px]">
+          <Chart type="bar" data={messageDeviceData} />
+        </Fieldset>
 
-        <fieldset className="p-4 border-2 rounded-md">
-          <legend className="text-lg font-semibold">Type Detection Data</legend>
-          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
-            <BarChart data={typeDetectionData} />
-          </div>
-        </fieldset>
-
-        <fieldset className="p-4 border-2 rounded-md">
-          <legend className="text-lg font-semibold">Notification Type Data</legend>
-          <div className="w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[300px] mx-auto">
-            <BarChart data={notificationTypeData} />
-          </div>
-        </fieldset>
+        <Fieldset legend="Type Detection Chart" className="w-[300px]">
+          <Chart type="bar" data={typeDetectionData} />
+        </Fieldset>
+        <Fieldset legend="Notification Type Chart" className="w-[300px]">
+          <Chart type="bar" data={notificationTypeData} />
+        </Fieldset>
       </div>
     </div>
   )

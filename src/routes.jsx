@@ -10,7 +10,7 @@ import ResetPassword from '~/pages/resetPassword'
 import ManageSupport from './pages/manageSupport'
 import ManageProject from './pages/manageProject'
 import selectArea from './components/selectArea.jsx'
-import Chart from './pages/chart'
+import ChartPage from './pages/chart'
 
 const publicRoutes = [
   { path: RoutesConfig.login, component: Login },
@@ -23,7 +23,7 @@ const publicRoutes = [
 
 const privateRoutes = [
   { path: RoutesConfig.project, component: Project },
-  { path: RoutesConfig.chart, component: Chart },
+  { path: RoutesConfig.chart, component: ChartPage },
   { path: RoutesConfig.device, component: Device },
   { path: RoutesConfig.alert, component: Alert },
   { path: RoutesConfig.manageSupport, component: ManageSupport },
