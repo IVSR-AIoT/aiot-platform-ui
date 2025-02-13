@@ -14,7 +14,8 @@ export default function ResetPassword() {
       icon: <ExclamationCircleOutlined />,
       content: 'Your session has expired, go back home and try again.',
       okText: 'Ok',
-      onOk: () => navigate('/'),
+      // onOk: () => navigate('/'),
+      onOk: () => (window.location.href = 'http://ui.aiotplatform.online/login'),
       cancelButtonProps: { style: { display: 'none' } }
     })
   }, [modal, navigate])
@@ -58,7 +59,8 @@ export default function ResetPassword() {
       try {
         await updatePassword({ password: form.password })
         localStorage.removeItem('accessToken')
-        navigate('/login')
+        // navigate('/login')
+        window.location.href = 'http://ui.aiotplatform.online/login'
         message.success('Password changed successfully')
       } catch {
         message.error('Failed to change password')
